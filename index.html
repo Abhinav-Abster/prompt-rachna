@@ -9,18 +9,42 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Orbitron:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <!-- Welcome Overlay -->
+    <div id="welcome-overlay">
+        <div class="welcome-content">
+            <h1 class="welcome-tagline">The Future is a Quiet Revolution.</h1>
+            <p class="welcome-subtext">Are you ready to awaken?</p>
+            <button id="enter-btn" class="futuristic-btn">ENTER EXPERIENCE</button>
+        </div>
+    </div>
+
     <!-- Particle Background -->
     <canvas id="particle-canvas"></canvas>
 
     <!-- Scroll Progress Indicator -->
     <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Audio Control -->
+    <div class="audio-control" id="audio-toggle" title="Toggle Music">
+        <div class="visualizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <span class="audio-label">FREQ</span>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
 
     <main>
         <!-- Section 1: Hero / Awakening -->

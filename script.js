@@ -4,6 +4,7 @@ gsap.registerPlugin(ScrollTrigger);
 document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initAnimations();
+    initAudio();
 });
 
 /* =========================================
@@ -222,4 +223,60 @@ function initAnimations() {
     document.getElementById("restart-btn").addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
+}
+
+/* =========================================
+   AUDIO CONTROLLER
+========================================= */
+function initAudio() {
+    const audio = document.getElementById('bg-music');
+    const toggle = document.getElementById('audio-toggle');
+    const enterBtn = document.getElementById('enter-btn');
+    const overlay = document.getElementById('welcome-overlay');
+
+    if (!audio || !toggle) return;
+
+    // Set initial volume (30-40% as requested)
+    audio.volume = 0.35;
+    audio.muted = false;
+
+    // Handle the Welcome Overlay + Audio start
+    if (enterBtn && overlay) {
+        enterBtn.addEventListener('click', () => {
+            // 1. Start audio
+            audio.play().then(() => {
+                toggle.classList.remove('muted');
+            }).catch(e => console.error("Playback failed:", e));
+
+            // 2. Hide overlay
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+
+            // 3. Enable scrolling
+            document.body.style.overflow = 'auto';
+
+            // 4. Cleanup DOM after transition
+            setTimeout(() => {
+                overlay.remove();
+            }, 1500);
+        });
+    }
+
+    // Mute/Unmute toggle
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (audio.muted || audio.paused) {
+            audio.muted = false;
+            audio.play();
+            toggle.classList.remove('muted');
+        } else {
+            audio.muted = true;
+            toggle.classList.add('muted');
+        }
+    });
+
+    // Sync UI with audio state
+    audio.onplay = () => {
+        toggle.classList.remove('muted');
+    };
 }
