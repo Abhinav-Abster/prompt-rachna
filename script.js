@@ -291,7 +291,7 @@ function initAutoscroll() {
 
     let scrolling = false;
     let scrollPos = window.scrollY;
-    let speed = 0.66; // Approx 120px per second at 60fps
+    let speed = 0.66; // Approx 180px per second at 60fps
 
     function step() {
         if (!scrolling) return;
