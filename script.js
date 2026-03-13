@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================
-   PARTICLE SYSTEM
+   INTERACTIVE DOT GRID BACKGROUND
 ========================================= */
 function initParticles() {
     const canvas = document.getElementById('particle-canvas');
@@ -17,80 +17,198 @@ function initParticles() {
 
     const ctx = canvas.getContext('2d');
     let width, height;
+    let dots = [];
 
-    // Resize handler
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
+    // Config
+    const dotSize = 2; // Sleek small dots
+    const gap = 30;    // Spacious minimalist feel
+    const proximity = 120;
+    const shockRadius = 250;
+    const shockStrength = 15;
+    const returnDuration = 1.2;
+    const speedTrigger = 100;
 
-    // State to interpolate colors based on scroll
-    const state = {
-        r: 59,  // default cold blue start #3b82f6 (59, 130, 246)
-        g: 130,
-        b: 246,
-        density: 100 // default number of particles
+    const pointer = {
+        x: -999, y: -999,
+        vx: 0, vy: 0,
+        speed: 0,
+        lastX: 0, lastY: 0,
+        lastTime: 0
     };
 
-    // Adjust density based on screen size
-    if (width < 768) state.density = 40;
+    const state = {
+        r: 59,  // start blue
+        g: 130,
+        b: 246,
+        activeR: 168, // active purple
+        activeG: 85,
+        activeB: 247
+    };
 
-    class Particle {
-        constructor() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.size = Math.random() * 2 + 0.5;
-            this.speedX = Math.random() * 0.5 - 0.25;
-            this.speedY = Math.random() * -1 - 0.1; // float up
-            this.opacity = Math.random() * 0.5 + 0.1;
-        }
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : { r: 0, g: 0, b: 0 };
+    }
 
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
+    function buildGrid() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
 
-            // Wrap around edges
-            if (this.y < 0) {
-                this.y = height;
-                this.x = Math.random() * width;
+        const cols = Math.floor(width / gap);
+        const rows = Math.floor(height / gap);
+
+        const startX = (width - (cols * gap)) / 2 + gap / 2;
+        const startY = (height - (rows * gap)) / 2 + gap / 2;
+
+        dots = [];
+        for (let y = 0; y < rows + 1; y++) {
+            for (let x = 0; x < cols + 1; x++) {
+                dots.push({
+                    cx: startX + x * gap,
+                    cy: startY + y * gap,
+                    xOffset: 0,
+                    yOffset: 0,
+                    _active: false
+                });
             }
-            if (this.x > width) this.x = 0;
-            if (this.x < 0) this.x = width;
-        }
-
-        draw() {
-            ctx.fillStyle = `rgba(${state.r}, ${state.g}, ${state.b}, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
         }
     }
 
-    const particles = Array.from({ length: state.density }, () => new Particle());
+    window.addEventListener('resize', buildGrid);
+    buildGrid();
 
-    function animateParticles() {
+    function draw() {
         ctx.clearRect(0, 0, width, height);
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-        requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
 
-    // Color transition animation linked to scroll
+        const proxSq = proximity * proximity;
+
+        dots.forEach(dot => {
+            const dx = dot.cx - pointer.x;
+            const dy = dot.cy - pointer.y;
+            const dsq = dx * dx + dy * dy;
+
+            let fillStyle = `rgba(${state.r}, ${state.g}, ${state.b}, 0.15)`;
+
+            if (dsq < proxSq) {
+                const dist = Math.sqrt(dsq);
+                const t = 1 - dist / proximity;
+                const r = Math.round(state.r + (state.activeR - state.r) * t);
+                const g = Math.round(state.g + (state.activeG - state.g) * t);
+                const b = Math.round(state.b + (state.activeB - state.b) * t);
+                fillStyle = `rgba(${r}, ${g}, ${b}, ${0.15 + t * 0.85})`;
+            }
+
+            ctx.fillStyle = fillStyle;
+            ctx.beginPath();
+            ctx.arc(dot.cx + dot.xOffset, dot.cy + dot.yOffset, dotSize, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+    }
+
+    // Interaction Listeners
+    window.addEventListener('mousemove', (e) => {
+        const now = performance.now();
+        const dt = pointer.lastTime ? now - pointer.lastTime : 16;
+
+        const dx = e.clientX - pointer.lastX;
+        const dy = e.clientY - pointer.lastY;
+
+        pointer.vx = (dx / dt) * 1000;
+        pointer.vy = (dy / dt) * 1000;
+        pointer.speed = Math.hypot(pointer.vx, pointer.vy);
+
+        pointer.lastX = e.clientX;
+        pointer.lastY = e.clientY;
+        pointer.lastTime = now;
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+
+        // "Push" effect for nearby dots when moving fast
+        if (pointer.speed > speedTrigger) {
+            dots.forEach(dot => {
+                const dist = Math.hypot(dot.cx - pointer.x, dot.cy - pointer.y);
+                if (dist < proximity && !dot._active) {
+                    dot._active = true;
+                    // Nudge calculation
+                    const pushX = (dot.cx - pointer.x) * 0.2 + pointer.vx * 0.01;
+                    const pushY = (dot.cy - pointer.y) * 0.2 + pointer.vy * 0.01;
+
+                    gsap.to(dot, {
+                        xOffset: pushX,
+                        yOffset: pushY,
+                        duration: 0.3,
+                        ease: "power2.out",
+                        onComplete: () => {
+                            gsap.to(dot, {
+                                xOffset: 0,
+                                yOffset: 0,
+                                duration: returnDuration,
+                                ease: "elastic.out(1, 0.5)",
+                                onComplete: () => { dot._active = false; }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }, { passive: true });
+
+    window.addEventListener('click', (e) => {
+        const cx = e.clientX;
+        const cy = e.clientY;
+
+        dots.forEach(dot => {
+            const dist = Math.hypot(dot.cx - cx, dot.cy - cy);
+            if (dist < shockRadius) {
+                dot._active = true;
+                const falloff = 1 - dist / shockRadius;
+                const pushX = (dot.cx - cx) * shockStrength * falloff;
+                const pushY = (dot.cy - cy) * shockStrength * falloff;
+
+                gsap.killTweensOf(dot);
+                gsap.to(dot, {
+                    xOffset: pushX,
+                    yOffset: pushY,
+                    duration: 0.4,
+                    ease: "power3.out",
+                    onComplete: () => {
+                        gsap.to(dot, {
+                            xOffset: 0,
+                            yOffset: 0,
+                            duration: returnDuration + 0.5,
+                            ease: "elastic.out(1, 0.3)",
+                            onComplete: () => { dot._active = false; }
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    draw();
+
+    // Theming transition tied to scroll
     ScrollTrigger.create({
         trigger: "body",
         start: "top top",
         end: "bottom bottom",
-        scrub: 1,
+        scrub: 2,
         onUpdate: (self) => {
-            // Transition from Cold Blue (59, 130, 246) to Vibrant Purple (168, 85, 247)
+            // Background color state transition for the dots
+            // From Blue (59, 130, 246) to Purple (168, 85, 247)
             state.r = Math.floor(59 + (168 - 59) * self.progress);
             state.g = Math.floor(130 + (85 - 130) * self.progress);
             state.b = Math.floor(246 + (247 - 246) * self.progress);
+
+            // Adjust active color too to keep contrast
+            // From Purple to a lighter Teal or similar if desired, 
+            // but keeping it simple for now: active is always slightly brighter or just shifted.
         }
     });
 }
@@ -291,7 +409,7 @@ function initAutoscroll() {
 
     let scrolling = false;
     let scrollPos = window.scrollY;
-    let speed = 0.66; // Approx 180px per second at 60fps
+    let speed = 0.66; // Approx 300px per second at 60fps
 
     function step() {
         if (!scrolling) return;
