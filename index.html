@@ -31,15 +31,26 @@
     <!-- Scroll Progress Indicator -->
     <div class="progress-bar" id="progress-bar"></div>
 
-    <!-- Audio Control -->
-    <div class="audio-control" id="audio-toggle" title="Toggle Music">
-        <div class="visualizer">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
+    <!-- Audio Control Group -->
+    <div class="controls-container">
+        <div class="audio-control" id="scroll-toggle" title="Toggle Autoscroll">
+            <div class="scroll-icon">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <span class="audio-label">AUTO</span>
         </div>
-        <span class="audio-label">FREQ</span>
+
+        <div class="audio-control" id="audio-toggle" title="Toggle Music">
+            <div class="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <span class="audio-label">FREQ</span>
+        </div>
     </div>
 
     <audio id="bg-music" loop>

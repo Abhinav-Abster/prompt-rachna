@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     initAnimations();
     initAudio();
+    initAutoscroll();
 });
 
 /* =========================================
@@ -279,4 +280,61 @@ function initAudio() {
     audio.onplay = () => {
         toggle.classList.remove('muted');
     };
+}
+
+/* =========================================
+   AUTOSCROLL CONTROLLER
+========================================= */
+function initAutoscroll() {
+    const toggle = document.getElementById('scroll-toggle');
+    if (!toggle) return;
+
+    let scrolling = false;
+    let scrollPos = window.scrollY;
+    let speed = 0.66; // Approx 40px per second at 60fps
+
+    function step() {
+        if (!scrolling) return;
+
+        scrollPos += speed;
+        window.scrollTo(0, scrollPos);
+
+        // Stop if reached the bottom
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+            stop();
+        } else {
+            requestAnimationFrame(step);
+        }
+    }
+
+    function start() {
+        scrolling = true;
+        scrollPos = window.scrollY; // Sync with current scroll
+        toggle.classList.remove('muted');
+        requestAnimationFrame(step);
+    }
+
+    function stop() {
+        scrolling = false;
+        toggle.classList.add('muted');
+    }
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (scrolling) {
+            stop();
+        } else {
+            start();
+        }
+    });
+
+    // Handle manual scroll to sync position
+    window.addEventListener('scroll', () => {
+        if (!scrolling) {
+            scrollPos = window.scrollY;
+        }
+    }, { passive: true });
+
+    // Start in "muted" state (off)
+    stop();
 }
