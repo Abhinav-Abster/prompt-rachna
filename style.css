@@ -19,8 +19,8 @@
     /* Accents */
     --color-accent-cold: #3b82f6;
     /* Cold, technological */
-    --color-accent-warm: #f59e0b;
-    /* Warm, natural, hopeful */
+    --color-accent-warm: #a855f7;
+    /* Vibrant Purple */
     --color-accent-leaf: #10b981;
     /* Life, nature */
     --color-calm-blue: #7dd3fc;
@@ -401,7 +401,7 @@ h4 {
 }
 
 .glow-text {
-    text-shadow: 0 0 40px rgba(245, 158, 11, 0.4);
+    text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
 }
 
 .finale-content {

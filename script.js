@@ -12,10 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function initParticles() {
     const canvas = document.getElementById('particle-canvas');
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
     let width, height;
-    
+
     // Resize handler
     function resize() {
         width = canvas.width = window.innerWidth;
@@ -23,7 +23,7 @@ function initParticles() {
     }
     window.addEventListener('resize', resize);
     resize();
-    
+
     // State to interpolate colors based on scroll
     const state = {
         r: 59,  // default cold blue start #3b82f6 (59, 130, 246)
@@ -31,10 +31,10 @@ function initParticles() {
         b: 246,
         density: 100 // default number of particles
     };
-    
+
     // Adjust density based on screen size
     if (width < 768) state.density = 40;
-    
+
     class Particle {
         constructor() {
             this.x = Math.random() * width;
@@ -44,11 +44,11 @@ function initParticles() {
             this.speedY = Math.random() * -1 - 0.1; // float up
             this.opacity = Math.random() * 0.5 + 0.1;
         }
-        
+
         update() {
             this.x += this.speedX;
             this.y += this.speedY;
-            
+
             // Wrap around edges
             if (this.y < 0) {
                 this.y = height;
@@ -57,7 +57,7 @@ function initParticles() {
             if (this.x > width) this.x = 0;
             if (this.x < 0) this.x = width;
         }
-        
+
         draw() {
             ctx.fillStyle = `rgba(${state.r}, ${state.g}, ${state.b}, ${this.opacity})`;
             ctx.beginPath();
@@ -65,9 +65,9 @@ function initParticles() {
             ctx.fill();
         }
     }
-    
+
     const particles = Array.from({ length: state.density }, () => new Particle());
-    
+
     function animateParticles() {
         ctx.clearRect(0, 0, width, height);
         particles.forEach(p => {
@@ -77,7 +77,7 @@ function initParticles() {
         requestAnimationFrame(animateParticles);
     }
     animateParticles();
-    
+
     // Color transition animation linked to scroll
     ScrollTrigger.create({
         trigger: "body",
@@ -85,10 +85,10 @@ function initParticles() {
         end: "bottom bottom",
         scrub: 1,
         onUpdate: (self) => {
-            // Transition from Cold Blue (59, 130, 246) to Warm Gold (245, 158, 11)
-            state.r = Math.floor(59 + (245 - 59) * self.progress);
-            state.g = Math.floor(130 + (158 - 130) * self.progress);
-            state.b = Math.floor(246 + (11 - 246) * self.progress);
+            // Transition from Cold Blue (59, 130, 246) to Vibrant Purple (168, 85, 247)
+            state.r = Math.floor(59 + (168 - 59) * self.progress);
+            state.g = Math.floor(130 + (85 - 130) * self.progress);
+            state.b = Math.floor(246 + (247 - 246) * self.progress);
         }
     });
 }
@@ -111,12 +111,12 @@ function initAnimations() {
 
     // 1. Hero Reveal & Year Spin
     const tlHero = gsap.timeline();
-    
+
     // Text fade in
     tlHero.to(".hero-title", { opacity: 1, duration: 2, ease: "power2.out" })
-          .to(".hero-subtitle", { opacity: 1, duration: 1.5 }, "-=1")
-          .to(".scroll-prompt", { opacity: 1, duration: 1 }, "+=0.5");
-          
+        .to(".hero-subtitle", { opacity: 1, duration: 1.5 }, "-=1")
+        .to(".scroll-prompt", { opacity: 1, duration: 1 }, "+=0.5");
+
     // Counter spin 2026 -> 2070 when scrolling starts
     ScrollTrigger.create({
         trigger: "#sec-hero",
@@ -128,14 +128,14 @@ function initAnimations() {
                 year: 2070,
                 duration: 2.5,
                 ease: "power3.inOut",
-                onUpdate: function() {
+                onUpdate: function () {
                     document.getElementById("year-display").innerText = Math.round(obj.year);
                 }
             });
         },
         once: true
     });
-    
+
     // 2. Body Color Transition (Dark 2026 -> Light 2070)
     ScrollTrigger.create({
         trigger: "#sec-revelation", // Transition starts revealing the truth
@@ -183,13 +183,13 @@ function initAnimations() {
             counters.forEach(counter => {
                 const target = parseFloat(counter.getAttribute('data-target'));
                 const isFloat = !Number.isInteger(target);
-                
+
                 let obj = { val: 0 };
                 gsap.to(obj, {
                     val: target,
                     duration: 2.5,
                     ease: "power2.out",
-                    onUpdate: function() {
+                    onUpdate: function () {
                         counter.innerText = isFloat ? obj.val.toFixed(1) : Math.round(obj.val);
                     }
                 });
@@ -212,12 +212,12 @@ function initAnimations() {
             start: "top 60%"
         }
     });
-    
+
     tlFinale.from(".finale-title", { y: 30, opacity: 0, duration: 1 })
-            .from(".finale-subtitle", { scale: 0.9, opacity: 0, duration: 1.2, ease: "back.out" }, "-=0.5")
-            .to(".finale-content", { opacity: 1, y: -20, duration: 1 })
-            .to(".restart-btn", { opacity: 1, duration: 1 }, "-=0.5");
-            
+        .from(".finale-subtitle", { scale: 0.9, opacity: 0, duration: 1.2, ease: "back.out" }, "-=0.5")
+        .to(".finale-content", { opacity: 1, y: -20, duration: 1 })
+        .to(".restart-btn", { opacity: 1, duration: 1 }, "-=0.5");
+
     // Restart Button Logic
     document.getElementById("restart-btn").addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
