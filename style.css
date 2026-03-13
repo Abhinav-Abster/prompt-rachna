@@ -562,6 +562,46 @@ h4 {
     -webkit-text-fill-color: transparent;
 }
 
+/* =========================================
+   CHARACTER DIALOGUE COLORS
+========================================= */
+/* SAGE - Home AI System (Cyan/Cool Tech) */
+.character-sage {
+    color: var(--color-calm-blue) !important;
+    font-family: var(--font-futuristic) !important;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 10px rgba(125, 211, 252, 0.3);
+}
+
+/* ARIA - Medical AI System (Warm Gold) */
+.character-aria {
+    color: #fcd34d !important;
+    font-family: var(--font-futuristic) !important;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 10px rgba(252, 211, 77, 0.3);
+}
+
+/* The Boy - Young Resident (Lime Green) */
+.character-boy {
+    color: #86efac !important;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(134, 239, 172, 0.3);
+}
+
+/* The Teacher - Education Guide (Teal) */
+.character-teacher {
+    color: #2dd4bf !important;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(45, 212, 191, 0.3);
+}
+
+/* The Old Man - Wisdom Bearer (Warm Orange) */
+.character-oldman {
+    color: #fb923c !important;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(251, 146, 60, 0.3);
+}
+
 
 /* =========================================
    6. THE NUMBERS (Stats)
