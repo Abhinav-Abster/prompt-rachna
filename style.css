@@ -404,12 +404,12 @@ h4 {
    STORY SECTIONS GENERAL
 ========================================= */
 .story-section {
-    min-height: 100vh;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     position: relative;
-    padding: var(--space-xl) 0;
+    padding: var(--space-lg) 0;
 }
 
 /* Text Reveal Utilities */
