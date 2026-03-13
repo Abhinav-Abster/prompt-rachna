@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimations();
     initAudio();
     initAutoscroll();
+    initCustomCursor();
+    initTextDecipher();
 });
 
 /* =========================================
@@ -371,8 +373,9 @@ function initAudio() {
             overlay.style.opacity = '0';
             overlay.style.pointerEvents = 'none';
 
-            // 3. Enable scrolling
+            // 3. Enable scrolling and reset position
             document.body.style.overflow = 'auto';
+            window.scrollTo(0, 0);
 
             // 4. Cleanup DOM after transition
             setTimeout(() => {
@@ -455,4 +458,109 @@ function initAutoscroll() {
 
     // Start in "muted" state (off)
     stop();
+}
+
+/* =========================================
+   CUSTOM SCANNER CURSOR
+========================================= */
+function initCustomCursor() {
+    const cursor = document.getElementById('scanner-cursor');
+    if (!cursor) return;
+
+    const xDisplay = document.getElementById('cursor-x');
+    const yDisplay = document.getElementById('cursor-y');
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let isMoving = false;
+    let movingTimeout;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        cursor.classList.add('visible');
+        cursor.classList.add('moving');
+
+        clearTimeout(movingTimeout);
+        movingTimeout = setTimeout(() => {
+            cursor.classList.remove('moving');
+        }, 1000);
+    });
+
+    function lerp(start, end, amt) {
+        return (1 - amt) * start + amt * end;
+    }
+
+    function render() {
+        cursorX = lerp(cursorX, mouseX, 0.15);
+        cursorY = lerp(cursorY, mouseY, 0.15);
+
+        cursor.style.left = `${cursorX}px`;
+        cursor.style.top = `${cursorY}px`;
+
+        if (xDisplay && yDisplay) {
+            xDisplay.textContent = Math.round(cursorX).toString().padStart(3, '0');
+            yDisplay.textContent = Math.round(cursorY).toString().padStart(3, '0');
+        }
+
+        requestAnimationFrame(render);
+    }
+
+    render();
+
+    // Hover states
+    const interactiveElements = document.querySelectorAll('a, button, .audio-control, .futuristic-btn, .highlight-text');
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    document.addEventListener('mousedown', () => cursor.classList.add('active'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('active'));
+}
+
+/* =========================================
+   TEXT DECIPHER EFFECT (ARIA)
+========================================= */
+function initTextDecipher() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@&%*';
+    const elements = document.querySelectorAll('.decipher-text');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('deciphered')) {
+                scramble(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    elements.forEach(el => observer.observe(el));
+
+    function scramble(el) {
+        const originalText = el.innerText;
+        let iteration = 0;
+        el.classList.add('deciphered');
+        el.classList.add('scrambling');
+
+        const interval = setInterval(() => {
+            el.innerText = originalText.split('')
+                .map((char, index) => {
+                    if (index < iteration) {
+                        return originalText[index];
+                    }
+                    return chars[Math.floor(Math.random() * chars.length)];
+                })
+                .join('');
+
+            if (iteration >= originalText.length) {
+                clearInterval(interval);
+                el.classList.remove('scrambling');
+            }
+
+            iteration += 1;
+        }, 10);
+    }
 }

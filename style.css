@@ -13,6 +13,7 @@
     /* Vibrant Purple */
     --color-calm-blue: #7dd3fc;
     /* SAGE dialogue */
+    --color-decipher: #cbd5e1;
 
     --text-primary-dark: #f8fafc;
     --text-secondary-dark: #94a3b8;
@@ -600,6 +601,140 @@ h4 {
     color: #fb923c !important;
     font-weight: 600;
     text-shadow: 0 0 10px rgba(251, 146, 60, 0.3);
+}
+
+/* =========================================
+   CINEMATIC ENHANCEMENTS: SCANNER CURSOR
+========================================= */
+/* Hide default cursor globally */
+body,
+a,
+button,
+.audio-control,
+.futuristic-btn,
+.highlight-text {
+    cursor: none !important;
+}
+
+#scanner-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#scanner-cursor.visible {
+    opacity: 1;
+}
+
+.cursor-dot {
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff;
+}
+
+.cursor-ring {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+        height 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+        border-color 0.3s ease;
+}
+
+.ring-1 {
+    width: 20px;
+    height: 20px;
+}
+
+.ring-2 {
+    width: 40px;
+    height: 40px;
+    border-style: dashed;
+    animation: rotate-cursor 10s linear infinite;
+}
+
+.cursor-coords {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    font-family: var(--font-futuristic);
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#scanner-cursor.moving .cursor-coords {
+    opacity: 1;
+}
+
+/* Hover States */
+#scanner-cursor.hovering .ring-1 {
+    width: 60px;
+    height: 60px;
+    border-color: var(--color-accent-cold);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+#scanner-cursor.hovering .ring-2 {
+    width: 80px;
+    height: 80px;
+    border-color: var(--color-accent-cold);
+}
+
+#scanner-cursor.active .cursor-dot {
+    transform: scale(2);
+    background: var(--color-accent-warm);
+}
+
+@keyframes rotate-cursor {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Decipher Text Effect */
+.decipher-text {
+    position: relative;
+    transition: opacity 0.5s ease;
+}
+
+.decipher-text.scrambling {
+    filter: blur(1px);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    #scanner-cursor {
+        display: none;
+    }
+
+    body,
+    a,
+    button,
+    .audio-control,
+    .futuristic-btn {
+        cursor: auto !important;
+    }
 }
 
 
