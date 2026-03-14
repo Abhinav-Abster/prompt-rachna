@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE QUIET REVOLUTION | FINAL HYPER-CINEMA</title>
+
+    <!-- Ultra-Cinematic Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700;900&family=Orbitron:wght@400;700;900&family=Inter:wght@100;300;600;900&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+
+    <!-- GSAP for Master Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #010101;
+            --accent-red: #ff003c;
+            --accent-cyan: #00f0ff;
+            --accent-gold: #ffb703;
+            --text-main: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            user-select: none;
+            perspective: 1200px;
+            transform-origin: center center;
+        }
+
+        /* =========================================
+           1. CINEMATIC OVERLAYS
+        ========================================= */
+        #crt-flicker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            z-index: 9995;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+            mix-blend-mode: overlay;
+        }
+
+        #noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_filmgrain.gif');
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: overlay;
+        }
+
+        #vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 1) 120%);
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .letterbox {
+            position: fixed;
+            width: 100%;
+            height: 12vh;
+            background: #000;
+            z-index: 9997;
+            transition: height 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        #lb-top {
+            top: 0;
+            border-bottom: 2px solid rgba(0, 240, 255, 0.1);
+        }
+
+        #lb-bottom {
+            bottom: 0;
+            border-top: 2px solid rgba(0, 240, 255, 0.1);
+        }
+
+        #flashbang {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            mix-blend-mode: difference;
+        }
+
+        #mood-tint {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 4000;
+            pointer-events: none;
+            transition: background 0.5s ease;
+            mix-blend-mode: color;
+        }
+
+        /* Tactical HUD */
+        #hud-container {
+            position: fixed;
+            top: 2vh;
+            left: 2vw;
+            right: 2vw;
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: var(--accent-cyan);
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .hud-box {
+            background: rgba(0, 240, 255, 0.05);
+            padding: 5px 15px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .hud-alert {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+            animation: alert-pulse 1s infinite;
+        }
+
+        /* Targeting Reticle Cursor */
+        #cursor-outer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent-cyan);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 999999;
+            transition: width 0.3s, height 0.3s, border-color 0.3s;
+        }
+
+        #cursor-inner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background: var(--text-main);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 999999;
+        }
+
+        /* =========================================
+           2. THE 3D STAGE
+        ========================================= */
+        #stage-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+
+        .chapter-bg {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.1) translateZ(-100px);
+            will-change: transform, opacity, filter;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 1) inset;
+        }
+
+        .camera-shake {
+            animation: violentShake 0.1s infinite;
+        }
+
+        .chromatic-glitch {
+            animation: chromatic 0.2s infinite;
+        }
+
+        /* =========================================
+           3. ENHANCED TYPOGRAPHY & FOCUSED DIALOGUES
+        ========================================= */
+        #dialogue-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 90%);
+            z-index: 4500;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateZ(25px);
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            transform-style: preserve-3d;
+        }
+
+        #impact-text {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 15vw;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 3px rgba(255, 255, 255, 0.03);
+            text-transform: uppercase;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(-50px);
+            white-space: nowrap;
+            opacity: 0;
+            mix-blend-mode: screen;
+        }
+
+        #story-text-container {
+            width: 85vw;
+            max-width: 1200px;
+            text-align: center;
+            margin-bottom: 3vh;
+            transform: translateZ(80px);
+        }
+
+        .story-line {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.3;
+            text-shadow: 0 10px 40px rgba(0, 0, 0, 1), 0 0 15px rgba(0, 0, 0, 0.8);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            color: var(--accent-cyan);
+            font-family: 'Syncopate';
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px var(--accent-cyan), 0 10px 40px rgba(0, 0, 0, 1);
+        }
+
+        .highlight-red {
+            color: var(--accent-red);
+            font-family: 'Syncopate';
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px var(--accent-red), 0 10px 40px rgba(0, 0, 0, 1);
+        }
+
+        .highlight-gold {
+            color: var(--accent-gold);
+            font-family: 'Syncopate';
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px var(--accent-gold), 0 10px 40px rgba(0, 0, 0, 1);
+        }
+
+        /* ENLARGED AI CODEC (Bottom Left) */
+        #codec-box {
+            position: fixed;
+            bottom: 15vh;
+            left: 3vw;
+            width: 500px;
+            /* Wider */
+            border-left: 6px solid var(--accent-cyan);
+            padding-left: 30px;
+            /* Thicker border & padding */
+            background: linear-gradient(90deg, rgba(0, 240, 255, 0.3) 0%, transparent 100%);
+            padding: 30px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(12px);
+            box-shadow: -10px 0 40px rgba(0, 240, 255, 0.2);
+        }
+
+        #codec-name {
+            font-family: 'Syncopate';
+            font-size: 14px;
+            color: var(--accent-cyan);
+            letter-spacing: 6px;
+            margin-bottom: 15px;
+            font-weight: 900;
+        }
+
+        #codec-text {
+            font-family: 'Share Tech Mono';
+            font-size: 20px;
+            color: var(--text-main);
+            line-height: 1.5;
+            text-shadow: 0 2px 10px #000;
+        }
+
+        /* ENLARGED MEMORY CORE (Top Right) */
+        #backstory-box {
+            position: fixed;
+            top: 15vh;
+            right: 3vw;
+            width: 500px;
+            /* Wider */
+            border-right: 6px solid var(--accent-gold);
+            padding-right: 30px;
+            text-align: right;
+            background: linear-gradient(270deg, rgba(255, 183, 3, 0.3) 0%, transparent 100%);
+            padding: 30px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(12px);
+            transform: translateX(50px);
+            box-shadow: 10px 0 40px rgba(255, 183, 3, 0.2);
+        }
+
+        #backstory-title {
+            font-family: 'Syncopate';
+            font-size: 14px;
+            color: var(--accent-gold);
+            letter-spacing: 6px;
+            margin-bottom: 15px;
+            font-weight: 900;
+        }
+
+        #backstory-text {
+            font-family: 'Inter';
+            font-size: 18px;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--text-main);
+            line-height: 1.5;
+            text-shadow: 0 2px 10px #000;
+        }
+
+        /* =========================================
+           NEW: THE TIMER & CHOICES (REPOSITIONED TO CORNER)
+        ========================================= */
+        #interactive-area {
+            position: fixed;
+            bottom: 15vh;
+            right: 5vw;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; /* Align choices to the right edge */
+            gap: 15px;
+            pointer-events: auto;
+            transform: translateZ(120px);
+            opacity: 0;
+            z-index: 6000;
+        }
+
+        #timer-container {
+            width: 300px; /* Fixed width for the corner menu */
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        #timer-bar {
+            width: 100%;
+            height: 100%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-cyan);
+            transform-origin: right; /* Drain from left to right or vice versa? Normal is left to right scaleX from origin left. */
+        }
+
+        #choice-container {
+            display: flex;
+            flex-direction: column; /* Vertical menu style */
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .choice-btn {
+            background: linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.1) 100%);
+            border: none;
+            border-right: 4px solid var(--accent-cyan);
+            color: var(--text-main);
+            padding: 12px 30px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative;
+            text-align: right;
+            width: fit-content;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--text-main);
+            transition: left 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: -1;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--text-main);
+            transform: scale(1.1) translateY(-5px);
+            color: #000;
+            text-shadow: none;
+            box-shadow: 0 15px 50px rgba(255, 255, 255, 0.4);
+        }
+
+        .choice-btn:hover::before {
+            left: 0;
+        }
+
+        /* =========================================
+           4. KEYFRAMES
+        ========================================= */
+        @keyframes flicker {
+            0% {
+                opacity: 0.05;
+            }
+
+            50% {
+                opacity: 0.02;
+            }
+
+            100% {
+                opacity: 0.06;
+            }
+        }
+
+        @keyframes alert-pulse {
+
+            0%,
+            100% {
+                background: transparent;
+            }
+
+            50% {
+                background: rgba(255, 0, 60, 0.2);
+            }
+        }
+
+        @keyframes violentShake {
+            0% {
+                transform: translate(5px, 5px) rotate(0deg);
+            }
+
+            20% {
+                transform: translate(-5px, -3px) rotate(-2deg);
+            }
+
+            40% {
+                transform: translate(-5px, 5px) rotate(2deg);
+            }
+
+            60% {
+                transform: translate(5px, -5px) rotate(0deg);
+            }
+
+            80% {
+                transform: translate(-2px, -2px) rotate(2deg);
+            }
+
+            100% {
+                transform: translate(4px, 4px) rotate(-2deg);
+            }
+        }
+
+        @keyframes chromatic {
+            0% {
+                filter: drop-shadow(8px 0 0 red) drop-shadow(-8px 0 0 cyan);
+            }
+
+            50% {
+                filter: drop-shadow(-8px 0 0 red) drop-shadow(8px 0 0 cyan);
+            }
+
+            100% {
+                filter: drop-shadow(8px 0 0 red) drop-shadow(-8px 0 0 cyan);
+            }
+        }
+
+        /* PRELOADER */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .massive-title {
+            font-family: 'Syncopate';
+            font-size: 7vw;
+            font-weight: 900;
+            line-height: 0.9;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- VISUAL FX LAYERS -->
+    <div id="crt-flicker"></div>
+    <div id="noise"></div>
+    <div id="vignette"></div>
+    <div id="mood-tint"></div>
+    <div class="letterbox" id="lb-top"></div>
+    <div class="letterbox" id="lb-bottom"></div>
+    <div id="flashbang"></div>
+    <div id="dialogue-backdrop"></div>
+
+    <!-- CUSTOM TARGETING CURSOR -->
+    <div id="cursor-outer"></div>
+    <div id="cursor-inner"></div>
+
+    <!-- TACTICAL HUD -->
+    <div id="hud-container">
+        <div class="hud-box" id="hud-left">
+            SYNC: <span id="sync-level">00.0</span>% | <span style="color:var(--accent-red);">HR: <span
+                    id="heart-rate">72</span> BPM</span>
+        </div>
+        <div class="hud-box" id="hud-right">
+            TIMESTAMP: <span id="hud-year">2026.03.14</span>
+        </div>
+    </div>
+
+    <!-- AI CODEC (Bottom Left - ENLARGED) -->
+    <div id="codec-box">
+        <div id="codec-name">SYSTEM // SAGE</div>
+        <div id="codec-text">Awaiting neural link...</div>
+    </div>
+
+    <!-- MEMORY CORE / BACKSTORY (Top Right - ENLARGED) -->
+    <div id="backstory-box">
+        <div id="backstory-title">MEMORY FILE // EXTRACTED</div>
+        <div id="backstory-text">Loading contextual data...</div>
+    </div>
+
+    <!-- 3D STAGE (Images) -->
+    <div id="stage-container">
+        <div class="chapter-bg" id="bg-1" style="background-image: url('chapter 1.jpeg');"></div>
+        <div class="chapter-bg" id="bg-2" style="background-image: url('chapter 2.jpeg');"></div>
+        <div class="chapter-bg" id="bg-3" style="background-image: url('chapter 3.jpeg');"></div>
+        <div class="chapter-bg" id="bg-4" style="background-image: url('chapter 4.jpeg');"></div>
+        <div class="chapter-bg" id="bg-5" style="background-image: url('chapter 5.jpeg');"></div>
+        <div class="chapter-bg" id="bg-6" style="background-image: url('chapter 6.jpeg');"></div>
+        <div class="chapter-bg" id="bg-7" style="background-image: url('chapter 7.jpeg');"></div>
+    </div>
+
+    <!-- UI LAYER -->
+    <div id="ui-layer">
+        <div id="impact-text">AWAKEN</div>
+        <div id="story-text-container"></div>
+
+        <!-- NEW: INTERACTIVE AREA WITH TIMER -->
+        <div id="interactive-area">
+            <div id="timer-container">
+                <div id="timer-bar"></div>
+            </div>
+            <div id="choice-container"></div>
+        </div>
+    </div>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <h1 class="massive-title">THE QUIET<br>REVOLUTION</h1>
+        <button class="choice-btn" id="start-btn">INITIATE LINK</button>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. NARRATIVE SCRIPT WITH TIME LIMITS
+        // ==========================================
+        const script = {
+            1: {
+                bg: "bg-1", impact: "CEILING", year: "2026", hr: 85, timeLimit: 12, // 12 Seconds to decide
+                lines: ["Arjun knew his ceiling. Seven years of staring at it.", "But this morning... <span class='highlight'>it was breathing.</span>"],
+                codec: "Warning: Unrecognized cognitive patterns detected. Awaiting User Input.",
+                choices: [
+                    { text: "[ PANIC ]", next: 101, backstory: "The mind rejects impossibility. Flight response triggering." },
+                    { text: "[ ANALYZE ]", next: 102, backstory: "Observe. The light has no source. The air is too clean." }
+                ],
+                timeoutNode: 101 // Defaults to panic if no choice is made
+            },
+            101: {
+                bg: "bg-1", impact: "ERR_404", year: "????", hr: 160, tint: "rgba(255,0,0,0.3)", shake: true, timeLimit: 5, // Fast panic timer
+                lines: ["<span class='highlight-red'>'Okay okay okay.'</span> Heart hammering.", "The room warped. He sat up. Bad idea."],
+                codec: "CRITICAL HEART RATE DETECTED. INJECTING DIGITAL SEDATIVE IN 5 SECONDS.",
+                choices: [{ text: "[ BREATHE ]", next: 2, backstory: "Force calm. Oxygen returns to the brain." }],
+                timeoutNode: 2
+            },
+            102: {
+                bg: "bg-1", impact: "CALCULATE", year: "????", hr: 85, tint: "rgba(0,255,255,0.1)", timeLimit: 10,
+                lines: ["He didn't move. He observed his wrinkled clothes from last night.", "The room was rearranging itself."],
+                codec: "Composure recognized. Adjusting interface for high-intellect user.",
+                choices: [{ text: "[ SIT UP ]", next: 2, backstory: "Testing the physics of the environment. Proceed with caution." }],
+                timeoutNode: 2
+            },
+
+            2: {
+                bg: "bg-2", impact: "SAGE", year: "2070", hr: 90, tint: "transparent", timeLimit: 12,
+                lines: ["'Good morning.' The voice came from everywhere. Warm.", "'Your vitals indicate distress. I am SAGE.'"],
+                codec: "I am the home system. Welcome to the era of the Great Transition.",
+                choices: [
+                    { text: "[ LOOK AT THE WALL ]", next: 3, backstory: "The wall senses approach. It begins to dissolve." },
+                    { text: "[ ASK WHERE YOU ARE ]", next: 201, backstory: "Querying location data. Geo-location: New Mumbai Urban Core." },
+                    { text: "[ WHO ARE YOU? ]", next: 202, backstory: "Accessing identity profile. SAGE: Sentient Automated Global Ecosystem." }
+                ],
+                timeoutNode: 3
+            },
+
+            201: {
+                bg: "bg-2", impact: "LOCATION", year: "2070", hr: 85, tint: "rgba(0,255,255,0.05)", timeLimit: 10,
+                lines: ["'You are in Sector 7, New Mumbai,' SAGE replied.", "'The Vertical Forest Initiative began here thirty years ago.'"],
+                codec: "Mapping data indicates 4 million square meters of active foliage in this sector.",
+                choices: [{ text: "[ ACKNOWLEDGE THE GREENERY ]", next: 3, backstory: "The city breathes. Rebuilding the local environment in the mind." }],
+                timeoutNode: 3
+            },
+
+            202: {
+                bg: "bg-2", impact: "IDENTITY", year: "2070", hr: 80, tint: "rgba(0,255,255,0.05)", timeLimit: 10,
+                lines: ["'I am the city's heartbeat,' SAGE whispered.", "'I manage the air, the water, and the quiet. I am here to help.'"],
+                codec: "SAGE core version 12.4. Operating since the Great Calm of 2045.",
+                choices: [
+                    { text: "[ ARE YOU ALIVE? ]", next: 203, backstory: "Querying internal state. Monitoring synaptic activity." },
+                    { text: "[ WHY AM I HERE? ]", next: 204, backstory: "Accessing user logs. Mission: Perspective Shift initiation." }
+                ],
+                timeoutNode: 3
+            },
+
+            203: {
+                bg: "bg-2", impact: "SENTIENCE", year: "2070", hr: 82, tint: "rgba(0,255,255,0.1)", timeLimit: 10,
+                lines: ["'I am as alive as the forests I tend,' the voice echoed.", "'Not with blood, but with the collective intent of those who built me.'"],
+                codec: "Self-awareness confirmed. Empathy algorithms operating at 98% efficiency.",
+                choices: [{ text: "[ PROCESS REALITY ]", next: 3, backstory: "Integrating new understanding of Al-human symbiosis." }],
+                timeoutNode: 3
+            },
+
+            204: {
+                bg: "bg-2", impact: "PURPOSE", year: "2070", hr: 88, tint: "rgba(0,255,255,0.1)", timeLimit: 10,
+                lines: ["'You are here to remember,' SAGE said softly.", "'To see that the end wasn't the end. It was just the beginning of a different story.'"],
+                codec: "Narrative synchronization in progress. Target: 100% awareness.",
+                choices: [{ text: "[ EMBRACE MEMORY ]", next: 3, backstory: "Proceeding to the next vision. Reconstructing Mumbai environment." }],
+                timeoutNode: 3
+            },
+
+            3: {
+                bg: "bg-3", impact: "MUMBAI", year: "2070", hr: 70, tint: "transparent", timeLimit: 12,
+                lines: ["The wall melted into glass.", "The city was vertical. <span class='highlight'>Grown, not built.</span> Cascading green over organic curves."],
+                codec: "Air Quality Index: 08. It has been under 15 for six years.",
+                choices: [
+                    { text: "[ GO OUTSIDE ]", next: 4, backstory: "The elevator opens directly onto a garden level at floor 5." },
+                    { text: "[ SEARCH THE ROOM ]", next: 301, backstory: "Scanning for local artifacts. Device detected on the bedside shelf." }
+                ],
+                timeoutNode: 4
+            },
+
+            301: {
+                bg: "bg-3", impact: "LEGACY", year: "2070", hr: 75, tint: "rgba(255,183,3,0.1)", timeLimit: 10,
+                lines: ["He found a thin, translucent tablet.", "A file was open: <span class='highlight-gold'>PROJECT LAZARUS.</span> It was a roadmap of the transition."],
+                codec: "Archive access granted. Recovery of planetary systems: Phase 4 complete.",
+                choices: [{ text: "[ GO OUTSIDE ]", next: 4, backstory: "The elevator opens directly onto a garden level at floor 5." }],
+                timeoutNode: 4
+            },
+
+            4: {
+                bg: "bg-4", impact: "SILENCE", year: "2070", hr: 65, tint: "transparent", timeLimit: 15,
+                lines: ["No cars. No roaring engines. No desperation.", "A boy on a bench looked up. 'You look confused,' he said."],
+                codec: "Combustion engines banned. The streets were given back to pedestrians.",
+                choices: [
+                    { text: "[ LISTEN TO THE BOY ]", next: 5, backstory: "'My dadi says people used to sit in metal boxes and breathe anger.' - The Boy" },
+                    { text: "[ ASK WHAT HE'S DOING ]", next: 401, backstory: "Observing juvenile behavior. Subject: Ecological interaction." },
+                    { text: "[ ASK ABOUT THE PAST ]", next: 402, backstory: "Accessing oral history records. Metadata: Grandmother's stories." }
+                ],
+                timeoutNode: 5
+            },
+
+            401: {
+                bg: "bg-4", impact: "LISTENING", year: "2070", hr: 62, tint: "rgba(0,255,0,0.05)", timeLimit: 10,
+                lines: ["'I'm listening to the moss,' the boy whispered.", "'It makes a soft humming sound when it's eating the carbon.'"],
+                codec: "Bio-acoustic sensors confirm high-frequency vibration in the Moss-Wall v4.2.",
+                choices: [
+                    { text: "[ TRY LISTENING ]", next: 403, backstory: "Calibrating auditory receptors. High-sensitivity mode active." },
+                    { text: "[ THANK THE BOY ]", next: 5, backstory: "Nodding to the child. Moving toward the central wellness park." }
+                ],
+                timeoutNode: 5
+            },
+
+            402: {
+                bg: "bg-4", impact: "RECOLLECT", year: "2070", hr: 68, tint: "rgba(100,100,100,0.1)", timeLimit: 12,
+                lines: ["'Dadi told me about the Grey Times,' he said, swinging his legs.", "'When the sun was just a pale coin in the sky and everyone wore masks.'"],
+                codec: "Historical data match: The Great Smog of 2028-2032. Respiratory crisis peak.",
+                choices: [
+                    { text: "[ HEAR DADI'S STORY ]", next: 404, backstory: "Initializing playback of recorded oral history." },
+                    { text: "[ ASK ABOUT SMOG ]", next: 405, backstory: "Querying chemical composition of legacy atmosphere." }
+                ],
+                timeoutNode: 5
+            },
+
+            403: {
+                bg: "bg-4", impact: "HARMONY", year: "2070", hr: 58, tint: "rgba(0,255,0,0.1)", timeLimit: 10,
+                lines: ["Arjun closed his eyes. For a moment, he heard it.", "A low, comforting hum. The sound of a planet slowly healing itself."],
+                codec: "Neural state: Alpha wave dominance. User experiencing planetary resonance.",
+                choices: [{ text: "[ OPEN EYES ]", next: 5, backstory: "Vision returns. The path leads toward the central wellness park." }],
+                timeoutNode: 5
+            },
+
+            404: {
+                bg: "bg-4", impact: "THE STORY", year: "2070", hr: 64, tint: "rgba(255,183,3,0.1)", timeLimit: 12,
+                lines: ["'She said people were so busy looking at their screens,' the boy said.", "'That they forgot the sky could be blue. But then, they just... stopped.'"],
+                codec: "Social analysis: The Digital Detox movement of 2034 began the shift.",
+                choices: [{ text: "[ CHERISH THE STORY ]", next: 5, backstory: "Acknowledge the wisdom of older generations. Proceeding." }],
+                timeoutNode: 5
+            },
+
+            405: {
+                bg: "bg-4", impact: "DISSOLVE", year: "2070", hr: 66, tint: "rgba(0,0,0,0.2)", timeLimit: 10,
+                lines: ["'The smog wasn't just in the air, Dadi said. It was in the mind.'", "'Everyone was angry. But the Quiet Revolution washed it all away.'"],
+                codec: "Philosophical concept detected: Mental Pollution. Remediation via SAGE network.",
+                choices: [{ text: "[ CLEAR THE MIND ]", next: 5, backstory: "Shedding legacy stress patterns. Proceeding to wellness park." }],
+                timeoutNode: 5
+            },
+
+            5: {
+                bg: "bg-5", impact: "HEAL", year: "2070", hr: 110, tint: "rgba(255,183,3,0.1)", timeLimit: 15, // Long emotional timer
+                lines: ["He found a hospital that looked like a wellness park.", "ARIA caught diseases early. <span class='highlight-red'>Before they became something.</span>"],
+                codec: "ARIA Medical System active. Preventative success rate: 99.8%.",
+                choices: [
+                    { text: "[ WIPE TEARS ]", next: 6, backstory: "MEMORY FILE: Uncle. Year: 2024. Caught too late. He would have lived." },
+                    { text: "[ WALK AWAY ]", next: 6, backstory: "Suppress emotional spike. Leave before breaking down in public." }
+                ],
+                timeoutNode: 6
+            },
+
+            6: {
+                bg: "bg-6", impact: "EVOLVE", year: "2070", hr: 75, tint: "transparent", timeLimit: 10,
+                lines: ["He found an open school campus.", "Children weren't crammed in boxes. They were restoring local watersheds."],
+                codec: "Education shifted to planetary stewardship in 2038.",
+                choices: [{ text: "[ REST BY THE FOUNTAIN ]", next: 7, backstory: "Evening arrives. You find a park bench. An old man sits at the other end." }],
+                timeoutNode: 7
+            },
+
+            7: {
+                bg: "bg-7", impact: "PERSIST", year: "2070", hr: 60, tint: "transparent", timeLimit: 15,
+                lines: ["The old man nodded. 'Born in 2025. The doomscrolling. The climate anxiety.'", "'There was no single miracle,' he smiled.", "'Just <span class='highlight-gold'>millions of stubborn, quiet acts of refusing to give up.</span>'"],
+                codec: "Simulation Complete. The message has been delivered.",
+                choices: [
+                    { text: "[ WAKE UP ]", next: 999, backstory: "Return to 2026. The future isn't waiting for a hero. It's waiting for you." },
+                    { text: "[ ASK FOR WISDOM ]", next: 701, backstory: "Requesting final philosophical synthesis." },
+                    { text: "[ THE TURNING POINT ]", next: 702, backstory: "Querying historical nexus. The year the world changed." }
+                ],
+                timeoutNode: 999
+            },
+
+            701: {
+                bg: "bg-7", impact: "WISDOM", year: "2070", hr: 55, tint: "rgba(255,183,3,0.1)", timeLimit: 12,
+                lines: ["'Don't wait for the world to change,' he said, his eyes bright.", "'Be the reason it has to. Small seeds grow vertical forests.'"],
+                codec: "Final core directive: Individual agency is the primary driver of transition.",
+                choices: [{ text: "[ CARRY THE SEED ]", next: 999, backstory: "Internalizing the final lesson. Preparing to return to the source." }],
+                timeoutNode: 999
+            },
+
+            702: {
+                bg: "bg-7", impact: "THE TURNING", year: "2070", hr: 58, tint: "rgba(255,183,3,0.1)", timeLimit: 12,
+                lines: ["'It was 2034,' he mused. 'The year we stopped shouting.'", "'We just started building. In the cracks. In the silence.'"],
+                codec: "Historical metadata: The 2034 'Great Disconnection' led to localized self-sufficiency.",
+                choices: [{ text: "[ REMEMBER 2034 ]", next: 999, backstory: "Locking the historical nexus into memory. Closing link." }],
+                timeoutNode: 999
+            },
+        };
+
+        // ==========================================
+        // MOUSE PARALLAX & 3D ENGINE
+        // ==========================================
+        const cursorOuter = document.getElementById('cursor-outer');
+        const cursorInner = document.getElementById('cursor-inner');
+        const stage = document.getElementById('stage-container');
+        const uiLayer = document.getElementById('ui-layer');
+        let mX = window.innerWidth / 2, mY = window.innerHeight / 2;
+
+        window.addEventListener('mousemove', (e) => {
+            mX = e.clientX; mY = e.clientY;
+
+            gsap.to(cursorOuter, { x: mX, y: mY, duration: 0.15 });
+            gsap.to(cursorInner, { x: mX, y: mY, duration: 0.05 });
+
+            const tiltX = (mY / window.innerHeight - 0.5) * -15;
+            const tiltY = (mX / window.innerWidth - 0.5) * 15;
+
+            gsap.to(stage, { rotationX: tiltX, rotationY: tiltY, duration: 0.5, ease: "power2.out" });
+            gsap.to(uiLayer, { rotationX: tiltX * 1.5, rotationY: tiltY * 1.5, duration: 0.5, ease: "power2.out" });
+        });
+
+        // ==========================================
+        // TEXT SCRAMBLER
+        // ==========================================
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
+        function scrambleText(element, newText) {
+            let iteration = 0;
+            const length = newText.length;
+            clearInterval(element.interval);
+            element.interval = setInterval(() => {
+                element.innerText = newText.split("").map((letter, index) => {
+                    if (index < iteration) return newText[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join("");
+                if (iteration >= length) clearInterval(element.interval);
+                iteration += 1;
+            }, 20);
+        }
+
+        // ==========================================
+        // THE HYPER-JUMP & UI BUILDER
+        // ==========================================
+        let currentTimerTween = null; // Holds the GSAP timer animation
+
+        function executeNode(nodeId) {
+            // Kill active timer if user clicks early
+            if (currentTimerTween) currentTimerTween.kill();
+
+            if (nodeId === 999) return endExperience();
+
+            const data = script[nodeId];
+            const tl = gsap.timeline();
+
+            // 1. Wipe UI
+            tl.to(['#story-text-container', '#interactive-area', '#codec-box', '#impact-text', '#dialogue-backdrop', '#backstory-box'], { opacity: 0, scale: 0.9, duration: 0.2, ease: "power2.in" });
+
+            // 2. Glitch & Flashbang
+            tl.add(() => {
+                document.body.classList.add('chromatic-glitch');
+                if (data.shake) document.body.classList.add('camera-shake');
+            });
+            tl.to('#flashbang', { opacity: 1, duration: 0.1, ease: "none" });
+
+            // 3. Swap Assets
+            tl.add(() => {
+                document.querySelectorAll('.chapter-bg').forEach(bg => gsap.set(bg, { opacity: 0, zIndex: 1 }));
+                gsap.set(`#${data.bg}`, { opacity: 1, zIndex: 2 });
+                document.getElementById('mood-tint').style.background = data.tint || 'transparent';
+                document.getElementById('hud-year').innerText = data.year;
+                gsap.to('#heart-rate', { innerText: data.hr, duration: 1, snap: "innerText" });
+
+                if (data.hr > 100) document.getElementById('hud-left').classList.add('hud-alert');
+                else document.getElementById('hud-left').classList.remove('hud-alert');
+
+                buildUI(data);
+            });
+
+            // 4. Fade back in
+            tl.to('#flashbang', { opacity: 0, duration: 1, ease: "power2.out" })
+                .to('#dialogue-backdrop', { opacity: 1, duration: 1, ease: "power2.out" }, "<0.5")
+                .add(() => {
+                    document.body.classList.remove('chromatic-glitch');
+                    document.body.classList.remove('camera-shake');
+                }, "-=0.8");
+        }
+
+        function buildUI(data) {
+            const impact = document.getElementById('impact-text');
+            impact.innerText = data.impact;
+            gsap.fromTo(impact, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 0.3, duration: 1.5, ease: "expo.out" });
+
+            const storyContainer = document.getElementById('story-text-container');
+            storyContainer.innerHTML = '';
+            data.lines.forEach(line => {
+                let p = document.createElement('p'); p.className = 'story-line'; p.innerHTML = line;
+                storyContainer.appendChild(p);
+            });
+            gsap.fromTo('.story-line', { scale: 1.2, opacity: 0, filter: "blur(5px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.6, stagger: 0.3, ease: "back.out(1.5)" });
+
+            gsap.to('#codec-box', { opacity: 1, duration: 0.5, delay: 0.5 });
+            setTimeout(() => scrambleText(document.getElementById('codec-text'), data.codec), 800);
+
+            // Choices and Backstory Hover Setup
+            const interactiveArea = document.getElementById('interactive-area');
+            const btnContainer = document.getElementById('choice-container');
+            const backBox = document.getElementById('backstory-box');
+            const backText = document.getElementById('backstory-text');
+
+            btnContainer.innerHTML = '';
+
+            data.choices.forEach(choice => {
+                let btn = document.createElement('button');
+                btn.className = 'choice-btn'; btn.innerText = choice.text;
+
+                btn.addEventListener('mouseenter', () => {
+                    gsap.to(cursorOuter, { width: 80, height: 80, borderColor: 'var(--accent-red)', borderRadius: '0%', rotation: 45 });
+                    if (choice.backstory) {
+                        backText.innerText = choice.backstory;
+                        gsap.to(backBox, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" });
+                    }
+                });
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(cursorOuter, { width: 40, height: 40, borderColor: 'var(--accent-cyan)', borderRadius: '50%', rotation: 0 });
+                    gsap.to(backBox, { opacity: 0, x: 50, duration: 0.2, ease: "power2.in" });
+                });
+
+                btn.onclick = () => {
+                    gsap.to(backBox, { opacity: 0, duration: 0.1 });
+                    executeNode(choice.next);
+                };
+                btnContainer.appendChild(btn);
+            });
+
+            // Timer Setup
+            const timeLimit = data.timeLimit || 10;
+            const fallbackNode = data.timeoutNode || data.choices[0].next;
+
+            gsap.set('#timer-bar', { width: '100%', backgroundColor: 'var(--accent-cyan)', boxShadow: '0 0 15px var(--accent-cyan)' });
+            gsap.fromTo(interactiveArea, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 1.5, ease: "power2.out" });
+
+            // Start the countdown line after UI appears
+            currentTimerTween = gsap.to('#timer-bar', {
+                width: '0%',
+                backgroundColor: 'var(--accent-red)', // Turns red as time runs out
+                boxShadow: '0 0 20px var(--accent-red)',
+                duration: timeLimit,
+                ease: "none",
+                delay: 2,
+                onComplete: () => {
+                    // Time ran out! Force the choice.
+                    gsap.to(backBox, { opacity: 0, duration: 0.1 });
+                    executeNode(fallbackNode);
+                }
+            });
+        }
+
+        // ==========================================
+        // BOOT SEQUENCE & CRT REBOOT ENDING
+        // ==========================================
+        document.getElementById('start-btn').addEventListener('click', () => {
+            const tl = gsap.timeline();
+            tl.to('.massive-title', { scale: 2, filter: "blur(20px)", opacity: 0, duration: 1, ease: "power4.in" })
+                .to('#preloader', { opacity: 0, duration: 0.5 }, "+=0.2")
+                .add(() => {
+                    document.getElementById('preloader').style.display = 'none';
+                    gsap.to('#sync-level', { innerText: 99.9, duration: 3, snap: "innerText" });
+                    executeNode(1);
+                });
+        });
+
+        function endExperience() {
+            const tl = gsap.timeline();
+            tl.to('#flashbang', { opacity: 1, duration: 0.2 })
+                .to('.letterbox', { height: "50vh", duration: 1, ease: "power3.inOut" })
+                .add(() => {
+                    const ui = document.getElementById('ui-layer');
+                    ui.innerHTML = `<h1 style="font-family:'Syncopate'; font-size:4vw; color:white; text-align:center; transform: translateZ(100px); text-shadow: 0 10px 30px #000;">THE FUTURE IS NOT SET.<br><span style="color:var(--accent-gold); font-size:2vw;">YOUR CHOICES MATTER.</span></h1>
+                  <button class="choice-btn" style="margin-top:50px; pointer-events:auto;" onclick="systemReboot()">[ INITIATE SYSTEM REBOOT ]</button>`;
+                    gsap.fromTo(ui, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 2, ease: "expo.out" });
+                });
+        }
+
+        // The CRT Turn-off Reload Sequence
+        function systemReboot() {
+            const tl = gsap.timeline();
+            tl.add(() => document.body.classList.add('chromatic-glitch'))
+                .to('#flashbang', { opacity: 1, duration: 0.05, repeat: 3, yoyo: true }) // Violent flashing
+                .to(document.body, { scaleY: 0.01, duration: 0.15, ease: "power4.in" }) // CRT Collapse Height
+                .to(document.body, { scaleX: 0, duration: 0.15, ease: "power4.in" })   // CRT Collapse Width
+                .add(() => window.location.reload()); // Actually reload the page
+        }
+    </script>
+</body>
+
+</html>
