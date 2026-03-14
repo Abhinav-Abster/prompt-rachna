@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quiet Revolution - A Hopeful Future</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Game Container -->
+    <div id="game-container">
+        <!-- Background Layer -->
+        <div id="bg-layer"></div>
+        
+        <!-- Transition Overlay Layer -->
+        <div id="transition-overlay"></div>
+        
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <h1 class="game-title">The Quiet Revolution</h1>
+            <p class="blink-text" style="font-family: var(--font-pixel); font-size: 1rem; color: #ffff55;">Click anywhere to start</p>
+        </div>
+
+        <!-- Dialogue Screen -->
+        <div id="dialogue-screen" class="screen">
+            <!-- Scene Information -->
+            <div id="scene-info">Year: <span id="year-display">2026</span></div>
+            
+            <!-- Dialogue UI -->
+            <div id="dialogue-ui">
+                <div id="character-name-box" class="hidden">
+                    <span id="character-name"></span>
+                </div>
+                <div id="dialogue-box">
+                    <p id="dialogue-text"></p>
+                    <span id="next-indicator" class="blink-text hidden">▼</span>
+                </div>
+                
+                <!-- Choices UI -->
+                <div id="choices-container" class="hidden">
+                    <div id="timer-bar"></div>
+                    <div id="choices-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Audio Control -->
+        <div class="audio-control" id="audio-toggle" title="Toggle Music">
+             <span class="audio-label">BGM OFF</span>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
