@@ -462,70 +462,62 @@ h4 {
     z-index: 1000;
 }
 
-/* Updated Navy Blue controls */
-.audio-control {
-    background: rgba(30, 58, 138, 0.8) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    box-shadow: 0 0 20px rgba(30, 58, 138, 0.4) !important;
-}
-
-.audio-label,
-.bar,
-.dot {
-    color: #fff !important;
-    background: #fff !important;
-}
-
-/* =========================================
-   AUDIO & SCROLL CONTROL (Futuristic Toggle)
-========================================= */
+/* Consolidated HUD-style controls */
 .audio-control {
     position: relative;
-    width: 60px;
-    height: 60px;
-    background: rgba(18, 24, 38, 0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(168, 85, 247, 0.3);
-    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid rgba(125, 211, 252, 0.2);
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+    box-shadow:
+        0 10px 25px -5px rgba(0, 0, 0, 0.5),
+        inset 0 0 10px rgba(125, 211, 252, 0.05);
+    overflow: hidden;
 }
 
 .audio-control:hover {
-    transform: scale(1.1);
-    border-color: var(--color-accent-warm);
-    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+    transform: translateY(-5px) scale(1.05);
+    border-color: #7dd3fc;
+    background: rgba(15, 23, 42, 0.9);
+    box-shadow:
+        0 20px 30px -10px rgba(0, 0, 0, 0.6),
+        0 0 15px rgba(125, 211, 252, 0.3);
 }
 
 .audio-control.muted {
     border-color: rgba(255, 255, 255, 0.1);
+    opacity: 0.6;
 }
 
-.audio-control.muted .bar {
-    height: 2px !important;
-    background: rgba(255, 255, 255, 0.3);
-    animation: none !important;
+.audio-control.muted:hover {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .visualizer {
     display: flex;
     align-items: flex-end;
     gap: 3px;
-    height: 20px;
-    margin-bottom: 4px;
+    height: 18px;
+    margin-bottom: 6px;
 }
 
 .bar {
     width: 3px;
     height: 4px;
-    background: var(--color-accent-warm);
+    background: #7dd3fc;
     border-radius: 2px;
     transition: all 0.3s ease;
+    box-shadow: 0 0 8px rgba(125, 211, 252, 0.5);
 }
 
 /* Music Playing Animation */
@@ -533,20 +525,11 @@ h4 {
     animation: bounce 0.8s ease-in-out infinite alternate;
 }
 
-.bar:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.bar:nth-child(2) {
-    animation-delay: 0.3s;
-}
-
-.bar:nth-child(3) {
-    animation-delay: 0.2s;
-}
-
-.bar:nth-child(4) {
-    animation-delay: 0.4s;
+.audio-control.muted .bar {
+    height: 2px !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
+    animation: none !important;
 }
 
 @keyframes bounce {
@@ -560,49 +543,47 @@ h4 {
 }
 
 .audio-label {
-    font-size: 8px;
+    font-size: 9px;
     font-family: var(--font-futuristic);
-    letter-spacing: 1px;
-    color: var(--color-accent-warm);
-    opacity: 0.8;
+    color: #7dd3fc;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(125, 211, 252, 0.3);
 }
 
 .audio-control.muted .audio-label {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.4);
+    text-shadow: none;
 }
 
 /* Scroll Icon Specifics */
 .scroll-icon {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    height: 20px;
+    gap: 4px;
+    height: 18px;
     justify-content: center;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .scroll-icon .dot {
     width: 4px;
     height: 4px;
-    background: var(--color-accent-warm);
+    background: #7dd3fc;
     border-radius: 50%;
     transition: all 0.3s ease;
+    box-shadow: 0 0 8px rgba(125, 211, 252, 0.5);
 }
 
 .audio-control:not(.muted)#scroll-toggle .dot {
     animation: moveDown 1s ease-in-out infinite;
 }
 
-.audio-control:not(.muted)#scroll-toggle .dot:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.audio-control:not(.muted)#scroll-toggle .dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.audio-control:not(.muted)#scroll-toggle .dot:nth-child(3) {
-    animation-delay: 0.4s;
+.audio-control.muted#scroll-toggle .dot {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+    animation: none !important;
 }
 
 @keyframes moveDown {
@@ -1071,27 +1052,32 @@ button,
 }
 
 .restart-btn {
-    background: transparent;
-    color: inherit;
-    border: 1px solid currentColor;
-    padding: 1rem 2.5rem;
-    font-family: var(--font-body);
-    font-size: 1rem;
-    letter-spacing: 0.1em;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #7dd3fc;
+    border: 2px solid rgba(125, 211, 252, 0.3);
+    padding: 1.2rem 3rem;
+    font-family: var(--font-futuristic);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
     cursor: pointer;
-    border-radius: 30px;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     opacity: 0;
-    /* Animated via JS */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .restart-btn:hover {
-    background: var(--color-accent-warm);
-    color: white;
-    border-color: var(--color-accent-warm);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
+    background: rgba(125, 211, 252, 0.15);
+    color: #fff;
+    border-color: #7dd3fc;
+    transform: translateY(-5px);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(125, 211, 252, 0.4);
 }
 
 /* =========================================
