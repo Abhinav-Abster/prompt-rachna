@@ -185,21 +185,32 @@ body::after {
     padding: 0;
 }
 
-/* Transparent Cinematic Blur Transition at the bottom of each panel */
+/* Dual-Edge Seamless Blur Transitions */
+.manga-panel::before,
 .manga-panel::after {
     content: '';
     position: absolute;
-    bottom: 0;
     left: 0;
     width: 100%;
     height: 15vh;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    /* Fade the blur itself using a mask so it's transparent (no color) */
-    mask-image: linear-gradient(to bottom, transparent, black);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     pointer-events: none;
     z-index: 5;
+}
+
+/* Top Edge Blur (Entering Panel) */
+.manga-panel::before {
+    top: 0;
+    mask-image: linear-gradient(to top, transparent, black);
+    -webkit-mask-image: linear-gradient(to top, transparent, black);
+}
+
+/* Bottom Edge Blur (Exiting Panel) */
+.manga-panel::after {
+    bottom: 0;
+    mask-image: linear-gradient(to bottom, transparent, black);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black);
 }
 
 /* Ensure content stays above the blur */
