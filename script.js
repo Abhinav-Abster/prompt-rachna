@@ -349,9 +349,16 @@ function initAnimations() {
 /* =========================================
    AUDIO CONTROLLER
 ========================================= */
+let dialogueQueue = [];
+let isDialoguePlaying = false;
+let dialogueAudio = new Audio();
+let lastScrollY = window.scrollY;
+let voiceMuted = false;
+
 function initAudio() {
     const audio = document.getElementById('bg-music');
     const toggle = document.getElementById('audio-toggle');
+    const voiceToggle = document.getElementById('voice-toggle');
     const enterBtn = document.getElementById('enter-btn');
     const overlay = document.getElementById('welcome-overlay');
 
@@ -361,13 +368,26 @@ function initAudio() {
     audio.volume = 0.35;
     audio.muted = false;
 
+    // Dialogue audio setup
+    dialogueAudio.volume = 0.7; // Sage's voice slightly louder than background
+    dialogueAudio.muted = false;
+
+    dialogueAudio.onended = () => {
+        isDialoguePlaying = false;
+        playNextDialogue();
+    };
+
     // Handle the Welcome Overlay + Audio start
     if (enterBtn && overlay) {
         enterBtn.addEventListener('click', () => {
             // 1. Start audio
             audio.play().then(() => {
                 toggle.classList.remove('muted');
-            }).catch(e => console.error("Playback failed:", e));
+            }).catch(e => console.error("Background music failed:", e));
+
+            // Sync dialogue audio state
+            dialogueAudio.muted = false;
+            if (voiceToggle) voiceToggle.classList.remove('muted');
 
             // 2. Hide overlay
             overlay.style.opacity = '0';
@@ -397,10 +417,61 @@ function initAudio() {
         }
     });
 
+    // Voice control toggle
+    if (voiceToggle) {
+        voiceToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            voiceMuted = !voiceMuted;
+            dialogueAudio.muted = voiceMuted;
+
+            if (voiceMuted) {
+                voiceToggle.classList.add('muted');
+                dialogueAudio.pause();
+                isDialoguePlaying = false;
+            } else {
+                voiceToggle.classList.remove('muted');
+                if (!isDialoguePlaying) playNextDialogue();
+            }
+        });
+    }
+
     // Sync UI with audio state
     audio.onplay = () => {
         toggle.classList.remove('muted');
     };
+}
+
+/* --- Dialogue Queue Logic --- */
+function addToDialogueQueue(src) {
+    if (!dialogueQueue.includes(src)) {
+        dialogueQueue.push(src);
+        if (!isDialoguePlaying) {
+            playNextDialogue();
+        }
+    }
+}
+
+function playNextDialogue() {
+    if (dialogueQueue.length > 0 && !isDialoguePlaying) {
+        if (voiceMuted) return; // Independent voice control check
+
+        isDialoguePlaying = true;
+        const nextSrc = dialogueQueue.shift();
+        dialogueAudio.src = nextSrc;
+
+        // Volume boost for dialogue 2
+        if (nextSrc.includes('dialouge2.ogg')) {
+            dialogueAudio.volume = 1.0; // Fixed invalid value 1.95 to max 1.0
+        } else {
+            dialogueAudio.volume = 0.7; // Standard
+        }
+
+        dialogueAudio.play().catch(e => {
+            console.error("Dialogue playback failed:", e);
+            isDialoguePlaying = false;
+            playNextDialogue();
+        });
+    }
 }
 
 /* =========================================
@@ -530,20 +601,37 @@ function initTextDecipher() {
     const elements = document.querySelectorAll('.decipher-text');
 
     const observer = new IntersectionObserver((entries) => {
+        const isScrollingDown = window.scrollY > lastScrollY;
+
         entries.forEach(entry => {
-            if (entry.isIntersecting && !entry.target.classList.contains('deciphered')) {
-                scramble(entry.target);
+            if (entry.isIntersecting) {
+                // Trigger ONLY when scrolling down
+                if (isScrollingDown && !entry.target.classList.contains('deciphered')) {
+                    scramble(entry.target);
+                }
+            } else {
+                // Reset when leaving so it can be re-triggered on NEXT downward scroll
+                entry.target.classList.remove('deciphered');
             }
         });
-    }, { threshold: 0.5 });
+
+        lastScrollY = window.scrollY;
+    }, { threshold: 0.2 });
 
     elements.forEach(el => observer.observe(el));
 
     function scramble(el) {
+        if (el.classList.contains('scrambling')) return; // Avoid overlapping runs
+
         const originalText = el.innerText;
         let iteration = 0;
         el.classList.add('deciphered');
         el.classList.add('scrambling');
+
+        // Trigger dialogue audio if present
+        if (el.dataset.audio) {
+            addToDialogueQueue(el.dataset.audio);
+        }
 
         const interval = setInterval(() => {
             el.innerText = originalText.split('')
