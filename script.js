@@ -364,8 +364,8 @@ function initAudio() {
 
     if (!audio || !toggle) return;
 
-    // Set initial volume (30-40% as requested)
-    audio.volume = 0.35;
+    // Set initial volume (Lowered from 0.35 to 0.15)
+    audio.volume = 0.05;
     audio.muted = false;
 
     // Dialogue audio setup
