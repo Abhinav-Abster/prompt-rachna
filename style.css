@@ -179,19 +179,37 @@ body::after {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    /* Thin black border for depth and separation */
-    border-bottom: 2px solid #000;
+    /* Clear, seamless transition */
+    border: none;
     margin: 0;
     padding: 0;
 }
 
-/* Panel Content Area */
+/* Transparent Cinematic Blur Transition at the bottom of each panel */
+.manga-panel::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15vh;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* Fade the blur itself using a mask so it's transparent (no color) */
+    mask-image: linear-gradient(to bottom, transparent, black);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Ensure content stays above the blur */
 .panel-content {
     position: relative;
     width: 100%;
     height: 100%;
     max-width: 1400px;
     pointer-events: none;
+    z-index: 10;
 }
 
 /* Manga Bubbles - Base */
