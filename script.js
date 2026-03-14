@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initAudio();
     initAutoscroll();
     initCustomCursor();
-    initMangaAnimations();
-    initTextDecipher();
+    initTextDecipher(); // Prepare deciphering early
+    initMangaAnimations(); // Then start manga animations
 });
 
 /* =========================================
@@ -346,9 +346,12 @@ function initAnimations() {
 /* =========================================
    MANGA MODE ANIMATIONS (Anime.js + GSAP)
 ========================================= */
+/* =========================================
+   MANGA MODE ANIMATIONS (Sequential ScrollTrigger)
+========================================= */
 function initMangaAnimations() {
-    // 1. Panel Panning Effect (GSAP)
     gsap.utils.toArray('.manga-panel').forEach(panel => {
+        // 1. Panel Panning Effect (GSAP)
         gsap.to(panel, {
             backgroundPosition: "50% 100%",
             ease: "none",
@@ -359,41 +362,47 @@ function initMangaAnimations() {
                 scrub: true
             }
         });
-    });
 
-    // 2. Bubble Pop-in (Anime.js + IntersectionObserver)
-    const bubbleObserver = new IntersectionObserver((entries) => {
-        const isScrollingDown = window.scrollY > lastScrollY;
+        // 2. Sequential Bubble pop-in
+        const bubbles = gsap.utils.toArray('.anime-bubble', panel);
 
-        entries.forEach(entry => {
-            if (entry.isIntersecting && isScrollingDown) {
-                const el = entry.target;
-                if (!el.classList.contains('animated')) {
-                    el.classList.add('animated');
+        ScrollTrigger.create({
+            trigger: panel,
+            start: "top 95%", // Trigger early: fires as soon as the panel edges into view
+            onEnter: () => {
+                bubbles.forEach(el => {
+                    if (!el.classList.contains('animated')) {
+                        el.classList.add('animated');
 
-                    // Anime.js elastic pop
-                    anime({
-                        targets: el,
-                        opacity: [0, 1],
-                        scale: [0.5, 1],
-                        translateY: [20, 0],
-                        duration: 800,
-                        delay: parseInt(el.dataset.delay) || 0,
-                        easing: 'easeOutElastic(1, .6)',
-                        begin: () => {
-                            // Audio trigger
-                            if (el.dataset.audio) {
-                                addToDialogueQueue(el.dataset.audio);
+                        // Anime.js elastic pop
+                        anime({
+                            targets: el,
+                            opacity: [0, 1],
+                            scale: [0.4, 1],
+                            translateY: [40, 0],
+                            duration: 1200,
+                            delay: parseInt(el.dataset.delay) || 0,
+                            easing: 'easeOutElastic(1, .6)',
+                            begin: () => {
+                                // Audio trigger exactly when bubble starts its entry
+                                if (el.dataset.audio) {
+                                    addToDialogueQueue(el.dataset.audio);
+                                }
+
+                                // Consolidate deciphering: trigger if target is inside
+                                const decipherTarget = el.querySelector('.decipher-text') || (el.classList.contains('decipher-text') ? el : null);
+                                if (decipherTarget && typeof scramble === 'function') {
+                                    scramble(decipherTarget);
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             }
         });
-        lastScrollY = window.scrollY;
-    }, { threshold: 0.3 });
+    });
 
-    document.querySelectorAll('.anime-bubble').forEach(b => bubbleObserver.observe(b));
+    ScrollTrigger.refresh();
 }
 
 /* =========================================
@@ -646,24 +655,13 @@ function initCustomCursor() {
 /* =========================================
    TEXT DECIPHER EFFECT
 ========================================= */
+window.scramble = null; // Expose globally for synchronization
+
 function initTextDecipher() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@&%*';
-    const elements = document.querySelectorAll('.decipher-text');
 
-    const observer = new IntersectionObserver((entries) => {
-        const isScrollingDown = window.scrollY > lastScrollY;
-        entries.forEach(entry => {
-            if (entry.isIntersecting && isScrollingDown) {
-                if (!entry.target.classList.contains('deciphered')) {
-                    scramble(entry.target);
-                }
-            }
-        });
-    }, { threshold: 0.5 });
-
-    elements.forEach(el => observer.observe(el));
-
-    function scramble(el) {
+    // Define the scramble function globally
+    window.scramble = function (el) {
         if (el.classList.contains('scrambling')) return; // Avoid overlapping runs
 
         const originalText = el.innerText;
@@ -671,10 +669,7 @@ function initTextDecipher() {
         el.classList.add('deciphered');
         el.classList.add('scrambling');
 
-        // Trigger dialogue audio if present
-        if (el.dataset.audio) {
-            addToDialogueQueue(el.dataset.audio);
-        }
+        // Note: Audio trigger removed here; handled by Manga bubble system for better sync.
 
         const interval = setInterval(() => {
             el.innerText = originalText.split('')
@@ -692,6 +687,8 @@ function initTextDecipher() {
             }
 
             iteration += 1;
-        }, 10);
-    }
+        }, 12); // Slightly slower for better readability
+    };
+
+    // Redundant IntersectionObserver removed to prevent glitches with the Manga bubble system
 }
