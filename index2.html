@@ -559,6 +559,40 @@
             margin-bottom: 50px;
             color: var(--text-main);
         }
+
+        /* =========================================
+           AUDIO CONTROL
+        ========================================= */
+        .audio-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 2px solid var(--accent-cyan);
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 9999;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--accent-cyan);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            user-select: none;
+        }
+
+        .audio-control:hover {
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .audio-label {
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
     </style>
 </head>
 
@@ -630,6 +664,16 @@
     <div id="preloader">
         <h1 class="massive-title">THE QUIET<br>REVOLUTION</h1>
         <button class="choice-btn" id="start-btn">INITIATE LINK</button>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bg-music" loop>
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Audio Control -->
+    <div class="audio-control" id="audio-toggle" title="Toggle Music">
+        <span class="audio-label">BGM OFF</span>
     </div>
 
     <script>
@@ -835,6 +879,26 @@
         };
 
         // ==========================================
+        // AUDIO CONTROL
+        // ==========================================
+        const bgMusic = document.getElementById('bg-music');
+        const audioToggle = document.getElementById('audio-toggle');
+        const audioLabel = document.querySelector('.audio-label');
+        let isAudioPlaying = false;
+
+        audioToggle.addEventListener('click', () => {
+            if (isAudioPlaying) {
+                bgMusic.pause();
+                audioLabel.innerText = 'BGM OFF';
+                isAudioPlaying = false;
+            } else {
+                bgMusic.play();
+                audioLabel.innerText = 'BGM ON';
+                isAudioPlaying = true;
+            }
+        });
+
+        // ==========================================
         // MOUSE PARALLAX & 3D ENGINE
         // ==========================================
         const cursorOuter = document.getElementById('cursor-outer');
@@ -1027,10 +1091,6 @@
                 .add(() => window.location.reload()); // Actually reload the page
         }
     </script>
-
-    <audio id="bg-music" loop>
-        <source src="audio.mp3" type="audio/mpeg">
-    </audio>
 </body>
 
 </html>
