@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAudio();
     initAutoscroll();
     initCustomCursor();
+    initMangaAnimations();
     initTextDecipher();
 });
 
@@ -39,12 +40,12 @@ function initParticles() {
     };
 
     const state = {
-        r: 59,  // start blue
-        g: 130,
-        b: 246,
-        activeR: 168, // active purple
-        activeG: 85,
-        activeB: 247
+        r: 125,  // Light Blue (#7dd3fc)
+        g: 211,
+        b: 252,
+        activeR: 30, // Navy Blue highlight
+        activeG: 58,
+        activeB: 138
     };
 
     function hexToRgb(hex) {
@@ -260,7 +261,7 @@ function initAnimations() {
 
     // 2. Body Color Transition (Dark 2026 -> Light 2070)
     ScrollTrigger.create({
-        trigger: "#sec-revelation", // Transition starts revealing the truth
+        trigger: "#panel-ch4", // Transition starts revealing the truth
         start: "center center",
         onEnter: () => document.body.classList.add("light-mode"),
         onLeaveBack: () => document.body.classList.remove("light-mode")
@@ -282,16 +283,18 @@ function initAnimations() {
         });
     });
 
-    // 4. Parallax Backgrounds
-    gsap.to("#parallax-city", {
-        yPercent: 30,
-        ease: "none",
-        scrollTrigger: {
-            trigger: "#sec-glimpse",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true
-        }
+    // 4. Cinematic Panel Panning (Restored for high impact)
+    gsap.utils.toArray('.manga-panel').forEach(panel => {
+        gsap.to(panel, {
+            backgroundPosition: "50% 100%", // Stronger vertical pan
+            ease: "none",
+            scrollTrigger: {
+                trigger: panel,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
     });
 
 
@@ -320,30 +323,77 @@ function initAnimations() {
         once: true
     });
 
-    // 7. Reflection Frame Drawing
-    ScrollTrigger.create({
-        trigger: "#sec-reflection",
-        start: "top 60%",
-        onEnter: () => document.querySelector(".border-frame").classList.add("is-visible")
-    });
-
     // 8. Finale Animations
     const tlFinale = gsap.timeline({
         scrollTrigger: {
-            trigger: "#sec-finale",
+            trigger: "#panel-ch7",
             start: "top 60%"
         }
     });
 
-    tlFinale.from(".finale-title", { y: 30, opacity: 0, duration: 1 })
-        .from(".finale-subtitle", { scale: 0.9, opacity: 0, duration: 1.2, ease: "back.out" }, "-=0.5")
-        .to(".finale-content", { opacity: 1, y: -20, duration: 1 })
+    tlFinale.from(".large-text", { y: 30, opacity: 0, duration: 1 })
         .to(".restart-btn", { opacity: 1, duration: 1 }, "-=0.5");
 
     // Restart Button Logic
-    document.getElementById("restart-btn").addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+    const restartBtn = document.getElementById("restart-btn");
+    if (restartBtn) {
+        restartBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
+}
+
+/* =========================================
+   MANGA MODE ANIMATIONS (Anime.js + GSAP)
+========================================= */
+function initMangaAnimations() {
+    // 1. Panel Panning Effect (GSAP)
+    gsap.utils.toArray('.manga-panel').forEach(panel => {
+        gsap.to(panel, {
+            backgroundPosition: "50% 100%",
+            ease: "none",
+            scrollTrigger: {
+                trigger: panel,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        });
     });
+
+    // 2. Bubble Pop-in (Anime.js + IntersectionObserver)
+    const bubbleObserver = new IntersectionObserver((entries) => {
+        const isScrollingDown = window.scrollY > lastScrollY;
+
+        entries.forEach(entry => {
+            if (entry.isIntersecting && isScrollingDown) {
+                const el = entry.target;
+                if (!el.classList.contains('animated')) {
+                    el.classList.add('animated');
+
+                    // Anime.js elastic pop
+                    anime({
+                        targets: el,
+                        opacity: [0, 1],
+                        scale: [0.5, 1],
+                        translateY: [20, 0],
+                        duration: 800,
+                        delay: parseInt(el.dataset.delay) || 0,
+                        easing: 'easeOutElastic(1, .6)',
+                        begin: () => {
+                            // Audio trigger
+                            if (el.dataset.audio) {
+                                addToDialogueQueue(el.dataset.audio);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        lastScrollY = window.scrollY;
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.anime-bubble').forEach(b => bubbleObserver.observe(b));
 }
 
 /* =========================================
@@ -483,7 +533,7 @@ function initAutoscroll() {
 
     let scrolling = false;
     let scrollPos = window.scrollY;
-    let speed = 0.867; // SPEED
+    let speed = 1.25; // INCREASED SPEED
 
     function step() {
         if (!scrolling) return;
@@ -594,7 +644,7 @@ function initCustomCursor() {
 }
 
 /* =========================================
-   TEXT DECIPHER EFFECT (ARIA)
+   TEXT DECIPHER EFFECT
 ========================================= */
 function initTextDecipher() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@&%*';
@@ -602,21 +652,14 @@ function initTextDecipher() {
 
     const observer = new IntersectionObserver((entries) => {
         const isScrollingDown = window.scrollY > lastScrollY;
-
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Trigger ONLY when scrolling down
-                if (isScrollingDown && !entry.target.classList.contains('deciphered')) {
+            if (entry.isIntersecting && isScrollingDown) {
+                if (!entry.target.classList.contains('deciphered')) {
                     scramble(entry.target);
                 }
-            } else {
-                // Reset when leaving so it can be re-triggered on NEXT downward scroll
-                entry.target.classList.remove('deciphered');
             }
         });
-
-        lastScrollY = window.scrollY;
-    }, { threshold: 0.2 });
+    }, { threshold: 0.5 });
 
     elements.forEach(el => observer.observe(el));
 

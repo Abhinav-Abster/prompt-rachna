@@ -7,12 +7,11 @@
     --color-dark-surface: #10141d;
     --color-ink: #1e293b;
 
-    --color-accent-cold: #3b82f6;
-    /* Cold, technological */
-    --color-accent-warm: #a855f7;
-    /* Vibrant Purple */
+    --color-accent-cold: #7dd3fc;
+    /* Light Blue for dots */
+    --color-accent-warm: #1e3a8a;
+    /* Navy Blue for controls */
     --color-calm-blue: #7dd3fc;
-    /* SAGE dialogue */
     --color-decipher: #cbd5e1;
 
     --text-primary-dark: #f8fafc;
@@ -160,6 +159,197 @@ body::after {
     left: 100%;
 }
 
+/* =========================================
+   MANGA MODE LAYOUT
+========================================= */
+#manga-container {
+    overflow-x: hidden;
+}
+
+.manga-panel {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* Enable cinematic parallax scrolling */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Thin black border for depth and separation */
+    border-bottom: 2px solid #000;
+    margin: 0;
+    padding: 0;
+}
+
+/* Panel Content Area */
+.panel-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1400px;
+    pointer-events: none;
+}
+
+/* Manga Bubbles - Base */
+.bubble {
+    position: absolute;
+    padding: 1.5rem 2rem;
+    border-radius: 50% / 30%;
+    border: 4px solid #000;
+    max-width: 320px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.1rem;
+    pointer-events: auto;
+    opacity: 0;
+    transform-origin: center;
+    transition: box-shadow 0.3s ease;
+}
+
+/* STORY BUBBLE - Wood/Parchment style */
+.bubble-story {
+    --bubble-bg: #e6ccb2;
+    background: linear-gradient(135deg, #f3e5ab 0%, var(--bubble-bg) 100%);
+    color: #4a3728;
+    border: 3px solid #5d4037;
+    border-radius: 12px;
+    /* Less round, more like a plaque */
+    box-shadow:
+        inset 0 0 15px rgba(0, 0, 0, 0.1),
+        8px 8px 0 rgba(74, 55, 40, 0.3);
+    font-family: var(--font-body);
+}
+
+/* FUTURISTIC BUBBLE - Tech/Holographic style */
+.bubble-futuristic {
+    --bubble-bg: rgba(15, 23, 42, 0.85);
+    background: var(--bubble-bg);
+    /* Darker sleek navy */
+    color: #7dd3fc;
+    border: 2px solid #38bdf8;
+    backdrop-filter: blur(8px);
+    box-shadow:
+        0 0 15px rgba(56, 189, 248, 0.4),
+        0 0 30px rgba(56, 189, 248, 0.2);
+    font-family: var(--font-futuristic);
+    letter-spacing: 0.5px;
+    border-radius: 4px 20px 4px 20px;
+}
+
+/* Tail/Pointer for bubbles */
+.bubble::after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+}
+
+/* Positioning Variants */
+/* Positioning Variants - Standardized Spacing */
+.bubble-tl {
+    top: 15%;
+    left: 10%;
+}
+
+.bubble-tl::after {
+    top: 100%;
+    left: 30px;
+    border-width: 20px 20px 0 0;
+    border-color: var(--bubble-bg) transparent transparent transparent;
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.5));
+}
+
+.bubble-tr {
+    top: 20%;
+    right: 12%;
+}
+
+.bubble-tr::after {
+    top: 100%;
+    right: 30px;
+    border-width: 20px 0 0 20px;
+    border-color: var(--bubble-bg) transparent transparent transparent;
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.5));
+}
+
+.bubble-bl {
+    bottom: 20%;
+    left: 12%;
+}
+
+.bubble-bl::after {
+    bottom: 100%;
+    left: 30px;
+    border-width: 0 20px 20px 0;
+    border-color: transparent var(--bubble-bg) transparent transparent;
+    filter: drop-shadow(0 -4px 0 rgba(0, 0, 0, 0.5));
+}
+
+.bubble-br {
+    bottom: 15%;
+    right: 10%;
+}
+
+.bubble-br::after {
+    bottom: 100%;
+    right: 30px;
+    border-width: 0 0 20px 20px;
+    border-color: transparent transparent var(--bubble-bg) transparent;
+    filter: drop-shadow(0 -4px 0 rgba(0, 0, 0, 0.5));
+}
+
+.bubble-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.large-bubble {
+    max-width: 600px;
+    font-size: 1.8rem;
+    border-radius: 40px;
+}
+
+/* Character Specific Outlines */
+.character-sage-bubble {
+    border-color: var(--color-calm-blue);
+    box-shadow: 8px 8px 0 rgba(125, 211, 252, 0.3);
+}
+
+.character-boy-bubble {
+    border-color: #86efac;
+    box-shadow: 8px 8px 0 rgba(134, 239, 172, 0.3);
+}
+
+.character-aria-bubble {
+    border-color: #fcd34d;
+    box-shadow: 8px 8px 0 rgba(252, 211, 77, 0.3);
+}
+
+.character-teacher-bubble {
+    border-color: #2dd4bf;
+    box-shadow: 8px 8px 0 rgba(45, 212, 191, 0.3);
+}
+
+.character-oldman-bubble {
+    border-color: #fb923c;
+    box-shadow: 8px 8px 0 rgba(251, 146, 60, 0.3);
+}
+
+/* Centered Button Container */
+.centered-btn-container {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: auto;
+}
+
 @keyframes fadeInUp {
     to {
         opacity: 1;
@@ -252,6 +442,20 @@ h4 {
     display: flex;
     gap: 15px;
     z-index: 1000;
+}
+
+/* Updated Navy Blue controls */
+.audio-control {
+    background: rgba(30, 58, 138, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 0 20px rgba(30, 58, 138, 0.4) !important;
+}
+
+.audio-label,
+.bar,
+.dot {
+    color: #fff !important;
+    background: #fff !important;
 }
 
 /* =========================================

@@ -13,6 +13,10 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+    <!-- Animation Libraries -->
+    <script src="gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
 
 <body>
@@ -78,7 +82,7 @@
         <source src="audio.mp3" type="audio/mpeg">
     </audio>
 
-    <main>
+    <main id="manga-container">
         <!-- Section 1: Hero / Awakening -->
         <section class="story-section hero" id="sec-hero">
             <div class="content-wrapper centered">
@@ -89,270 +93,124 @@
                 <h1 class="hero-title">The Wrong Morning</h1>
                 <p class="hero-subtitle">A World That Wasn't Supposed to Exist Yet.</p>
                 <div class="scroll-prompt">
-                    <span>Scroll to awaken</span>
+                    <span>Scroll to enter the story</span>
                     <div class="scroll-arrow">↓</div>
                 </div>
             </div>
         </section>
-
-        <!-- Section 2: Chapter 1 - The Ceiling Was Wrong -->
-        <section class="story-section" id="sec-confusion">
-            <div class="content-wrapper text-left">
-                <h2 class="section-title reveal-text" style="font-size: 2rem; margin-bottom: 1rem;">Chapter 1 — The
-                    Ceiling Was Wrong</h2>
-                <p class="chapter-text reveal-text">
-                    Arjun knew his ceiling. Seven years of staring at it during insomnia had made him an expert. The
-                    faint water stain near the fan. The small crack that looked vaguely like Italy. The way the tube
-                    light buzzed for exactly two seconds before turning on.
-                </p>
-                <p class="chapter-text reveal-text delay-1">
-                    This ceiling was not that ceiling. This ceiling was breathing.
-                </p>
-                <p class="chapter-text reveal-text delay-2">
-                    Slowly. Rhythmically. Like the surface of a lake disturbed by something deep below. Panels of soft
-                    white material expanded and contracted, and the light didn't come from any visible source — it just
-                    existed, as if the air itself had decided to glow.
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-8">
-                    Arjun sat up. Bad idea. The room moved with him.
-                </p>
-                <p class="chapter-text reveal-text delay-4">
-                    Not in a spinning, hungover way. In a responsive way — like the room had been waiting for him to
-                    wake up and was now rearranging itself to accommodate a standing human. The wall to his left became
-                    slightly more transparent. A faint breeze arrived from nowhere. The temperature dropped half a
-                    degree.
-                </p>
-                <p class="chapter-text reveal-text delay-5 mt-8 highlight-text">
-                    "Okay," Arjun said to no one. "Okay. Okay okay okay."
-                </p>
-                <p class="chapter-text reveal-text delay-6 mt-8">
-                    He looked down at his hands. His hands were normal. He looked at his clothes. Wrinkled t-shirt. Old
-                    pajamas with a small hole near the left knee. His clothes from last night.
-                    <br><br>
-                    Last night in 2026.
-                </p>
-                <p class="chapter-text reveal-text delay-7 mt-8">
-                    His phone was on the bed. He grabbed it like a lifeline. No signal. Obviously. But the date still
-                    showed — frozen at the last moment it knew:
-                    <br><br>
-                    <strong>March 14, 2026. 11:47 PM.</strong>
-                </p>
-                <p class="chapter-text reveal-text delay-8 mt-8">
-                    He had gone to sleep on a Thursday night after watching a mediocre Netflix show and eating leftover
-                    dal chawal.<br>
-                    He had woken up in someone else's century.
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 3: Chapter 2 & 3 - The First Glimpse -->
-        <section class="story-section chapter" id="sec-glimpse">
-            <div class="parallax-bg" id="parallax-city"></div>
-            <div class="content-wrapper text-right">
-                <h2 class="section-title reveal-text">Chapter 2 & 3</h2>
-                <p class="chapter-text reveal-text mt-8 highlight-text character-sage decipher-text"
-                    data-audio="dialouge1.ogg">
-                    "Good morning."
-                </p>
-                <p class="chapter-text reveal-text delay-1">
-                    Arjun yelped. The voice came from everywhere and nowhere simultaneously. Not robotic. Not that flat,
-                    emotionless Siri voice he was used to. This was warm. Almost human.
-                </p>
-                <p class="chapter-text reveal-text delay-2 mt-8 highlight-text character-sage decipher-text"
-                    data-audio="dialouge2.ogg">
-                    "Your vitals indicate significant distress. Would you like me to lower the ambient temperature
-                    further? Or would you prefer silence?"
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-8">
-                    "Who are you?" Arjun stared at the wall.
-                </p>
-                <p class="chapter-text reveal-text delay-4 mt-8 highlight-text character-sage decipher-text"
-                    data-audio="dialouge3.ogg">
-                    "I'm the home system. You can call me whatever you're comfortable with. The previous resident called
-                    me SAGE."
-                </p>
-                <p class="chapter-text reveal-text delay-5 mt-8">
-                    It took him eleven minutes to stand up and walk to the window. He walked to the wall. It sensed him
-                    approaching and slowly became glass — floor to ceiling, edge to edge — and Arjun looked out at
-                    Mumbai in 2070 and forgot how to breathe.
-                </p>
-                <p class="chapter-text reveal-text delay-6 mt-8">
-                    The city was vertical. Not in the cramped, desperate way of 2026. Buildings rose in organic curves,
-                    their surfaces covered in cascading green — actual trees, actual plants, growing directly from the
-                    structures.
-                </p>
-                <p class="chapter-text reveal-text delay-7 mt-8 highlight-text character-sage decipher-text"
-                    data-audio="dialouge4.ogg">
-                    "The air quality index is 8," SAGE said quietly. "It's been under 15 for the last six years."
-                </p>
-                <p class="chapter-text reveal-text delay-8 mt-8">
-                    "How?" he asked. Not to SAGE specifically. Just to the universe.
-                </p>
-                <p class="chapter-text reveal-text delay-9 mt-8 emphasis character-sage decipher-text"
-                    data-audio="dialouge5.ogg">
-                    "It took a long time," SAGE said. "And a lot of people who refused to stop trying."
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 4: Chapter 4 & 5 - The Street and Hospital -->
-        <section class="story-section chapter" id="sec-revelation">
-            <div class="parallax-bg" id="parallax-street"></div>
-            <div class="content-wrapper text-left">
-                <h2 class="section-title reveal-text">Chapter 4 & 5</h2>
-                <p class="chapter-text reveal-text mt-8">
-                    He stepped outside. The elevator opened directly onto a garden level — not the ground, but a
-                    communal park at floor 5... People sat in actual grass. A woman was reading something on a device so
-                    thin it looked like paper.
-                </p>
-                <p class="chapter-text reveal-text delay-1 mt-8">
-                    Then he looked at the street below and saw that there were no cars. Not few cars. No cars. The roads
-                    still existed — wide, clean — but they were filled with pedestrians, cyclists, and small silent pods
-                    that moved like schools of fish...
-                </p>
-                <p class="chapter-text reveal-text delay-2 mt-8 highlight-text character-boy">
-                    "You look confused," a boy, maybe ten years old, said from a bench.
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-8">
-                    "I am," Arjun said honestly.
-                </p>
-                <p class="chapter-text reveal-text delay-4 mt-8 highlight-text character-boy">
-                    "My dadi says when she was young, people used to sit in metal boxes and breathe each other's anger
-                    for two hours every day to get to work."
-                </p>
-                <p class="chapter-text reveal-text delay-5 mt-8">
-                    He wandered for hours, finding a hospital that looked like a open, airy wellness center. No
-                    ambulances screaming. A woman told him:
-                </p>
-                <p class="chapter-text reveal-text delay-6 mt-8 highlight-text character-aria">
-                    "ARIA can do a basic scan if you want... Most things we catch early now. Before they become
-                    something."
-                </p>
-                <p class="chapter-text reveal-text delay-7 mt-8">
-                    He thought about his uncle. 2024. Stage 3 cancer. Caught late because the symptoms were vague and
-                    the appointments were expensive... He had to leave the hospital before he started crying in public.
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 5: Chapter 6 & 7 - The Classroom and The Park -->
-        <section class="story-section chapter" id="sec-classroom-park">
-            <div class="parallax-bg" id="parallax-park"></div>
-            <div class="content-wrapper text-right">
-                <h2 class="section-title reveal-text">Chapter 6 & 7</h2>
-                <p class="chapter-text reveal-text mt-8">
-                    He found a school. Open campus, no walls, children sitting in clusters outside under trees. A
-                    teacher noticed him.
-                </p>
-                <p class="chapter-text reveal-text delay-1 mt-8 highlight-text character-teacher">
-                    "That group is working on a local watershed restoration project. That one is building a language
-                    model... Those three are arguing about the ethics of a historical decision made in 2031."
-                </p>
-                <p class="chapter-text reveal-text delay-2 mt-8">
-                    Evening arrived softly. He found a park and sat on a bench near a fountain. An old man sat at the
-                    other end. Ninety, maybe.
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-8 highlight-text character-oldman">
-                    "You're not from here," the old man said finally.
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-6">
-                    "No."
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-6 highlight-text character-oldman">
-                    "Where from?"
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-6">
-                    "2026."
-                </p>
-                <p class="chapter-text reveal-text delay-4 mt-8">
-                    The old man nodded slowly. "I was born in 2025... The pandemic hangover. The climate anxiety. The
-                    doomscrolling."
-                </p>
-                <p class="chapter-text reveal-text delay-5 mt-8 emphasis character-oldman">
-                    "There was no single moment," he said finally. "No invention that fixed everything. No hero. Just...
-                    people waking up every day and doing the next small thing."
-                </p>
-                <p class="chapter-text reveal-text delay-6 mt-8 character-oldman">
-                    "A researcher publishing a paper nobody read. A kid planting trees because her teacher told her to.
-                    A programmer writing code at 2 AM... Millions of small, stubborn, quiet acts of refusing to give
-                    up."
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 6: The Numbers -->
-        <section class="story-section stats" id="sec-stats">
-            <div class="content-wrapper">
-                <div class="stats-container">
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="8">0</span>
-                        <span class="stat-label">Air Quality Index</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="44">0</span>
-                        <span class="stat-label">Years of Persistence</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="0">0</span>
-                        <span class="stat-label">Single Miracles</span>
-                    </div>
+        <!-- Chapter 1: The Ceiling Was Wrong -->
+        <section class="manga-panel" id="panel-ch1" style="background-image: url('chapter 1.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-tl bubble-story anime-bubble" data-delay="0">
+                    <p>Arjun knew his ceiling. Seven years of staring at it... faint water stains, the Italy crack.</p>
                 </div>
-                <p class="stats-caption">"We were so scared," Arjun said. "In 2026."<br><span
-                        class="character-oldman">"It was," the old man said
-                        simply. "And people fixed it anyway."</span></p>
-            </div>
-        </section>
-
-        <!-- Section 7: The Reflection -->
-        <section class="story-section chapter chapter-light" id="sec-reflection">
-            <div class="content-wrapper centered max-width-md border-frame">
-                <p class="chapter-text reveal-text large-text">
-                    Epilogue — The Message
-                </p>
-                <p class="chapter-text reveal-text delay-1 mt-8">
-                    To whoever is reading this in 2026:
-                </p>
-                <p class="chapter-text reveal-text delay-2 mt-8 highlight-text">
-                    I know what your mornings feel like. The phone check before your eyes fully open. The news that's
-                    always slightly worse than yesterday.
-                </p>
-                <p class="chapter-text reveal-text delay-3 mt-8">
-                    I want to tell you something. I have seen your future.
-                </p>
-                <p class="chapter-text reveal-text delay-4 mt-8">
-                    Not a perfect one. Not a fixed one. But one where the air is breathable and the rivers are clean and
-                    children argue about ethics in school... It didn't happen because someone invented a miracle.
-                </p>
-                <p class="chapter-text reveal-text delay-5 mt-8 highlight-text">
-                    It happened because of you. The version of you that kept going anyway.
-                </p>
-                <p class="chapter-text reveal-text delay-6 mt-8">
-                    — Someone who needed to see it to believe it
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 8: The Invitation -->
-        <section class="story-section finale" id="sec-finale">
-            <div class="content-wrapper centered">
-                <h2 class="finale-title">The Future isn't waiting for Heroes.</h2>
-                <h3 class="finale-subtitle glow-text">It's waiting for you to do the next small thing.</h3>
-
-                <div class="finale-content">
-                    <p>Outside, Mumbai in 2070 breathed quietly under a sky full of stars. And somewhere, forty-four
-                        years behind him, a younger version of himself was completely unaware of what was being built,
-                        slowly, stubbornly, in his name.</p>
+                <div class="bubble bubble-center bubble-story anime-bubble" data-delay="500">
+                    <p class="highlight-text">This ceiling was breathing.</p>
                 </div>
+                <div class="bubble bubble-br bubble-story anime-bubble" data-delay="1000">
+                    <p>Panels of soft material expanded and contracted... the light just existed.</p>
+                </div>
+            </div>
+        </section>
 
-                <button class="restart-btn" id="restart-btn">Wake Up Again</button>
+        <!-- Chapter 2: The First Glimpse / Sage -->
+        <section class="manga-panel" id="panel-ch2" style="background-image: url('chapter 2.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-tl bubble-futuristic anime-bubble character-sage-bubble"
+                    data-audio="dialouge1.ogg" data-delay="0">
+                    <p class="character-sage decipher-text">"Good morning."</p>
+                </div>
+                <div class="bubble bubble-center bubble-futuristic anime-bubble character-sage-bubble"
+                    data-audio="dialouge2.ogg" data-delay="800">
+                    <p class="character-sage decipher-text">"Your vitals are stable. Would you like me to lower the
+                        ambient temperature?"</p>
+                </div>
+                <div class="bubble bubble-br bubble-story anime-bubble" data-delay="1500">
+                    <p>Mumbai 2070. The city was vertical. Buildings rose in organic curves.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 3: Sage's Revelation -->
+        <section class="manga-panel" id="panel-ch3" style="background-image: url('chapter 3.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-tl bubble-futuristic anime-bubble character-sage-bubble"
+                    data-audio="dialouge3.ogg" data-delay="0">
+                    <p class="character-sage decipher-text">"I'm SAGE. The previous resident called me that."</p>
+                </div>
+                <div class="bubble bubble-center bubble-futuristic anime-bubble character-sage-bubble"
+                    data-audio="dialouge4.ogg" data-delay="700">
+                    <p class="character-sage decipher-text">"Air quality is 8. It's been under 15 for six years."</p>
+                </div>
+                <div class="bubble bubble-br bubble-futuristic anime-bubble character-sage-bubble"
+                    data-audio="dialouge5.ogg" data-delay="1400">
+                    <p class="character-sage decipher-text">"It took a long time. People who refused to stop trying."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: The Streets of 2070 -->
+        <section class="manga-panel" id="panel-ch4" style="background-image: url('chapter 4.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-tr bubble-story anime-bubble" data-delay="0">
+                    <p>No cars. Only cyclists and silent pods moving like schools of fish.</p>
+                </div>
+                <div class="bubble bubble-center bubble-futuristic anime-bubble character-boy-bubble" data-delay="800">
+                    <p class="character-boy">"My dadi says people used to sit in metal boxes and breathe anger for two
+                        hours."</p>
+                </div>
+                <div class="bubble bubble-bl bubble-story anime-bubble" data-delay="1600">
+                    <p>Arjun wandered for hours, finding a city that felt like a living forest.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 5: Healthcare and ARIA -->
+        <section class="manga-panel" id="panel-ch5" style="background-image: url('chapter 5.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-tl bubble-futuristic anime-bubble character-aria-bubble" data-delay="0">
+                    <p class="character-aria">"ARIA can do a basic scan... Most things we catch early now."</p>
+                </div>
+                <div class="bubble bubble-center bubble-story anime-bubble" data-delay="800">
+                    <p>He thought about his uncle in 2024. The world was so different then.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 6: Legacy and The Teacher -->
+        <section class="manga-panel" id="panel-ch6" style="background-image: url('chapter 6.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-tr bubble-futuristic anime-bubble character-teacher-bubble" data-delay="0">
+                    <p class="character-teacher">"That group is working on a local watershed restoration project."</p>
+                </div>
+                <div class="bubble bubble-center bubble-futuristic anime-bubble character-oldman-bubble"
+                    data-delay="800">
+                    <p class="character-oldman">"Millions of small, stubborn acts of refusing to give up."</p>
+                </div>
+                <div class="bubble bubble-bl bubble-futuristic anime-bubble character-oldman-bubble" data-delay="1600">
+                    <p class="character-oldman">"It wasn't one miracle. It was every one of us."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 7: The Finale Starlight -->
+        <section class="manga-panel" id="panel-ch7" style="background-image: url('chapter 7.jpeg')">
+            <div class="panel-content">
+                <div class="bubble bubble-center bubble-story anime-bubble large-bubble" data-delay="0">
+                    <p class="large-text">I have seen your future. It happened because of you. The version of you that
+                        kept going anyway.</p>
+                </div>
+                <div class="bubble bubble-br bubble-story anime-bubble" data-delay="1000">
+                    <p>Mumbai breathed under a sky of stars. The future belongs to those who build it.</p>
+                </div>
+                <div class="centered-btn-container">
+                    <button class="restart-btn" id="restart-btn">Wake Up Again</button>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- Scripts -->
-    <!-- Attempt to use local GSAP file if present, fallbacks below won't be necessary as long as the user's gsap is sufficient -->
-    <script src="gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="script.js"></script>
 </body>
 
